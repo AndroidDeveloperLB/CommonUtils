@@ -160,6 +160,10 @@ object PreferenceUtil {
     }
 
     // string
+    fun getStringPref(context: Context, prefKey: String, defaultValue: String?): String? =
+        PreferenceManager.getDefaultSharedPreferences(context)
+            .getString(prefKey, defaultValue)
+
     fun getStringPref(
         context: Context,
         @StringRes prefKeyResId: Int,
