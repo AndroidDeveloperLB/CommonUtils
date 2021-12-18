@@ -1,14 +1,11 @@
 package com.lb.common_utils
 
 import android.content.Context
-import androidx.annotation.ArrayRes
-import androidx.annotation.BoolRes
-import androidx.annotation.IntegerRes
-import androidx.annotation.StringRes
+import androidx.annotation.*
 import androidx.preference.*
-import org.json.JSONArray
-import org.json.JSONException
+import org.json.*
 import java.util.*
+
 fun PreferenceFragmentCompat.findPreference(@StringRes prefKey: Int): Preference =
     findPreference(getString(prefKey))!!
 
@@ -58,8 +55,7 @@ object PreferenceUtil {
         pref.entries = entries
         pref.setOnPreferenceChangeListener { _, newValue ->
             val newValueStr = newValue.toString()
-            listener?.onChosenPreference(prefKey, newValueStr)
-            true
+            return@setOnPreferenceChangeListener listener?.onChosenPreference(prefKey, newValueStr) ?: true
         }
         return pref
     }
@@ -82,7 +78,7 @@ object PreferenceUtil {
     ): EnumType {
         val value = getStringPref(context, prefKeyResId, prefDefaultValue.name)
         return value?.runCatching { enumValueOf<EnumType>(this) }
-            ?.getOrNull() ?:prefDefaultValue
+            ?.getOrNull() ?: prefDefaultValue
     }
 
     fun <EnumType : Enum<EnumType>> putEnumPref(
@@ -92,9 +88,7 @@ object PreferenceUtil {
     ) {
         putStringPref(context, prefKeyResId, enumValue?.name)
     }
-
     // enumset
-
     fun <EnumType : Enum<EnumType>> getEnumSetPref(
         context: Context,
         @StringRes prefKeyResId: Int,
@@ -111,7 +105,6 @@ object PreferenceUtil {
                 result.add(java.lang.Enum.valueOf(enumClass, str))
         return result
     }
-
 
     fun <EnumType : Enum<EnumType>> putEnumCollectionPref(
         context: Context,
@@ -221,9 +214,7 @@ object PreferenceUtil {
         return PreferenceManager.getDefaultSharedPreferences(context)
             .getBoolean(prefKey, defaultValue)
     }
-
     // boolean
-
     fun getBooleanPref(
         context: Context,
         @StringRes prefKeyResId: Int,
@@ -232,7 +223,6 @@ object PreferenceUtil {
         return PreferenceManager.getDefaultSharedPreferences(context)
             .getBoolean(context.getString(prefKeyResId), defaultValue)
     }
-
 
     fun putBooleanPref(context: Context, @StringRes prefKeyResId: Int, newValue: Boolean) {
         val prefKey = context.getString(prefKeyResId)
@@ -371,6 +361,6 @@ object PreferenceUtil {
     }
 
     fun interface OnListPreferenceChosenListener {
-        fun onChosenPreference(key: String, value: String)
+        fun onChosenPreference(key: String, value: String): Boolean
     }
 }
