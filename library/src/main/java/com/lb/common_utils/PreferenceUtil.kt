@@ -45,7 +45,7 @@ object PreferenceUtil {
     ): ListPreference {
         val prefKey = fragment.getString(prefKeyId)
         val pref = fragment.findPreference<ListPreference>(prefKey)
-        val currentValue = PreferenceManager.getDefaultSharedPreferences(fragment.activity)
+        val currentValue = PreferenceManager.getDefaultSharedPreferences(fragment.activity!!)
             .getString(prefKey, null)
         pref!!.setDefaultValue(defaultValue)
         pref.summary = "%s"

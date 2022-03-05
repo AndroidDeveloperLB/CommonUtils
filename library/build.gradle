@@ -1,8 +1,7 @@
 plugins {
     id 'com.android.library'
     id 'kotlin-android'
-    id 'maven-publish'
-
+//    id 'maven-publish'
 }
 
 android {
@@ -11,8 +10,6 @@ android {
     defaultConfig {
         minSdk 19
         targetSdk 31
-        versionCode 1
-        versionName "1.0"
         consumerProguardFiles "consumer-rules.pro"
     }
 
@@ -29,20 +26,20 @@ android {
     kotlinOptions {
         jvmTarget = "11"
     }
-    afterEvaluate {
-        publishing {
-            publications {
-                release(MavenPublication) {
-                    from components.release
-                }
-            }
-        }
-    }
+//    afterEvaluate {
+//        publishing {
+//            publications {
+//                release(MavenPublication) {
+//                    from components.release
+//                }
+//            }
+//        }
+//    }
 }
 
 dependencies {
     implementation 'androidx.core:core-ktx:1.7.0'
-    implementation 'com.google.android.material:material:1.4.0'
+    implementation 'com.google.android.material:material:1.5.0'
     implementation 'androidx.work:work-runtime-ktx:2.7.1'
-    implementation 'androidx.preference:preference-ktx:1.1.1'
+    implementation 'androidx.preference:preference-ktx:1.2.0'
 }
