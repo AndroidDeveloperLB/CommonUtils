@@ -14,6 +14,7 @@ import java.io.File
 import java.util.regex.Pattern
 import kotlin.math.max
 
+@Suppress("unused")
 object SystemUtils {
     fun isDevMode(context: Context) =
         Settings.Secure.getInt(context.contentResolver, Settings.Global.DEVELOPMENT_SETTINGS_ENABLED, 0) != 0
@@ -167,4 +168,17 @@ object SystemUtils {
         )
         return places.firstOrNull { File(it, binaryName).exists() } != null
     }
+
+    fun getPerformanceClassValue(): Int {
+        return try {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S)
+                Build.VERSION.MEDIA_PERFORMANCE_CLASS
+            else -1
+        } catch (e: Throwable) {
+            e.printStackTrace()
+            -1
+        }
+    }
+
+    fun getArchitecture() = kotlin.runCatching { System.getProperty("os.arch") }.getOrNull() ?: ""
 }
