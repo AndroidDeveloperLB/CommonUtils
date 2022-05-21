@@ -5,11 +5,11 @@ plugins {
 }
 
 android {
-    compileSdk 31
+    compileSdk 32
 
     defaultConfig {
         minSdk 19
-        targetSdk 31
+        targetSdk 32
         consumerProguardFiles "consumer-rules.pro"
     }
 
@@ -26,6 +26,7 @@ android {
     kotlinOptions {
         jvmTarget = "11"
     }
+    namespace 'com.lb.common_utils'
 //    afterEvaluate {
 //        publishing {
 //            publications {
@@ -39,7 +40,7 @@ android {
 
 dependencies {
     implementation 'androidx.core:core-ktx:1.7.0'
-    implementation 'com.google.android.material:material:1.5.0'
+    implementation 'com.google.android.material:material:1.6.0'
     implementation 'androidx.work:work-runtime-ktx:2.7.1'
     implementation 'androidx.preference:preference-ktx:1.2.0'
 }
