@@ -53,6 +53,7 @@ private constructor(context: Context, val baseToast: Toast) : Toast(context) {
         baseToast.setText(s)
     }
 
+    @Deprecated("Deprecated in Java")
     override fun setView(view: View) {
         baseToast.view = view
         setContextCompat(view, SafeToastContext(view.context, this))
@@ -82,6 +83,7 @@ private constructor(context: Context, val baseToast: Toast) : Toast(context) {
         return baseToast.yOffset
     }
 
+    @Deprecated("Deprecated in Java")
     override fun getView(): View? {
         return baseToast.view
     }

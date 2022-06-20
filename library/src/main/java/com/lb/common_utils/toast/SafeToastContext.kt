@@ -33,6 +33,7 @@ internal class SafeToastContext(base: Context, private val toast: Toast) : Conte
 
     private inner class WindowManagerWrapper constructor(private val base: WindowManager) :
         WindowManager {
+        @Deprecated("Deprecated in Java")
         override fun getDefaultDisplay(): Display {
             return base.defaultDisplay
         }
