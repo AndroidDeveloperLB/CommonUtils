@@ -13,13 +13,8 @@ import android.widget.Toast
  * @author drakeet
  */
 internal class SafeToastContext(base: Context, private val toast: Toast) : ContextWrapper(base) {
-    private var badTokenListener: BadTokenListener? = null
     override fun getApplicationContext(): Context {
         return ApplicationContextWrapper(baseContext.applicationContext)
-    }
-
-    fun setBadTokenListener(badTokenListener: BadTokenListener) {
-        this.badTokenListener = badTokenListener
     }
 
     private inner class ApplicationContextWrapper constructor(base: Context) :
@@ -45,10 +40,6 @@ internal class SafeToastContext(base: Context, private val toast: Toast) : Conte
         override fun addView(view: View, params: ViewGroup.LayoutParams) {
             try {
                 base.addView(view, params)
-            } catch (e: BadTokenException) {
-                if (badTokenListener != null) {
-                    badTokenListener!!.onBadTokenCaught(toast)
-                }
             } catch (throwable: Throwable) {
                 throwable.printStackTrace()
             }

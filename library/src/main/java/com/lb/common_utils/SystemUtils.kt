@@ -14,6 +14,10 @@ import java.io.File
 import java.util.regex.Pattern
 import kotlin.math.max
 
+/**uses application context to make sure it will avoid memory leaks*/
+inline fun <reified T : Any> Context.getSystemServiceCompat(): T =
+    ContextCompat.getSystemService(applicationContext, T::class.java)!!
+
 @Suppress("unused")
 object SystemUtils {
     fun isDevMode(context: Context) =

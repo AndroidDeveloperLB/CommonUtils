@@ -21,14 +21,6 @@ class ToastCompat
  * @param base    The base toast
  */
 private constructor(context: Context, val baseToast: Toast) : Toast(context) {
-    fun setBadTokenListener(listener: BadTokenListener): ToastCompat {
-        val context = view!!.context
-        if (context is SafeToastContext) {
-            context.setBadTokenListener(listener)
-        }
-        return this
-    }
-
     override fun show() {
         baseToast.show()
     }
