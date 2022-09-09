@@ -21,7 +21,11 @@ inline fun <reified T : Any> Context.getSystemServiceCompat(): T =
 @Suppress("unused")
 object SystemUtils {
     fun isDevMode(context: Context) =
-        Settings.Secure.getInt(context.contentResolver, Settings.Global.DEVELOPMENT_SETTINGS_ENABLED, 0) != 0
+        Settings.Secure.getInt(
+            context.contentResolver,
+            Settings.Global.DEVELOPMENT_SETTINGS_ENABLED,
+            0
+        ) != 0
 
     /** returns the max size of the heap, in bytes     */
     private fun getMaxMemInBytes(): Long = Runtime.getRuntime().maxMemory()
@@ -41,8 +45,14 @@ object SystemUtils {
         val availableMemInBytes = getAvailableMemInBytes()
         val usedMemInBytes = maxMemInBytes - availableMemInBytes
         val usedMemInPercentage = usedMemInBytes * 100 / maxMemInBytes
-        return "used: " + StringsUtil.bytesIntoHumanReadable(usedMemInBytes, isMetric = false) + " / " +
-                StringsUtil.bytesIntoHumanReadable(maxMemInBytes, isMetric = false) + " (" + usedMemInPercentage + "%)"
+        return "used: " + StringsUtil.bytesIntoHumanReadable(
+            usedMemInBytes,
+            isMetric = false
+        ) + " / " +
+                StringsUtil.bytesIntoHumanReadable(
+                    maxMemInBytes,
+                    isMetric = false
+                ) + " (" + usedMemInPercentage + "%)"
     }
 
     fun setAppComponentEnabled(context: Context, componentClass: Class<*>, enable: Boolean) {
@@ -60,7 +70,7 @@ object SystemUtils {
         @Suppress("DEPRECATION") activity.window.addFlags(
             WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
         )
-        val power = ContextCompat.getSystemService(activity, PowerManager::class.java)!!
+        val power: PowerManager = activity.getSystemServiceCompat()
         val lock =
             power.newWakeLock(
                 PowerManager.FULL_WAKE_LOCK or PowerManager.ACQUIRE_CAUSES_WAKEUP or PowerManager.ON_AFTER_RELEASE,
@@ -73,7 +83,7 @@ object SystemUtils {
     @RequiresPermission(allOf = [android.Manifest.permission.ACCESS_NETWORK_STATE])
     fun isNetworkAvailable(context: Context): Boolean {
         return try {
-            val connectivityManager = ContextCompat.getSystemService(context, ConnectivityManager::class.java)!!
+            val connectivityManager: ConnectivityManager = context.getSystemServiceCompat()
             connectivityManager.activeNetworkInfo?.isConnected == true
         } catch (e: Exception) {
             false
