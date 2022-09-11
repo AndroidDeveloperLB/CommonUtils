@@ -3,7 +3,8 @@ package com.lb.common_utils
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.*
-import android.content.pm.PackageManager
+import android.content.pm.*
+import android.content.pm.PackageManager.NameNotFoundException
 import android.net.ConnectivityManager
 import android.os.*
 import android.provider.Settings
@@ -18,8 +19,58 @@ import kotlin.math.max
 inline fun <reified T : Any> Context.getSystemServiceCompat(): T =
     ContextCompat.getSystemService(applicationContext, T::class.java)!!
 
+fun PackageManager.queryIntentActivitiesCompat(intent: Intent, flags: Long = 0L): MutableList<ResolveInfo> {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
+        return queryIntentActivities(intent, PackageManager.ResolveInfoFlags.of(flags))
+    @Suppress("DEPRECATION")
+    return queryIntentActivities(intent, flags.toInt())
+}
+
+fun PackageManager.resolveActivityCompat(intent: Intent, flags: Long = 0L): ResolveInfo? {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
+        return resolveActivity(intent, PackageManager.ResolveInfoFlags.of(flags))
+    @Suppress("DEPRECATION")
+    return resolveActivity(intent, flags.toInt())
+}
+
+fun PackageManager.getActivityInfoCompat(componentName: ComponentName, flags: Long = 0L):ActivityInfo? {
+    try {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
+            return getActivityInfo(componentName, PackageManager.ComponentInfoFlags.of(flags))
+        @Suppress("DEPRECATION")
+        return getActivityInfo(componentName, flags.toInt())
+    }catch (_:NameNotFoundException){
+    }
+    return null
+}
+
 @Suppress("unused")
 object SystemUtils {
+    /**
+     * returns the label of the specified activity.
+     * Will first try using the activityInfo, and then the path to it.
+     */
+    fun getActivityLabel(packageManager: PackageManager, packageName: String, inputActivityInfo: ActivityInfo?,
+                         fullPathToActivity: String?
+    ): String? {
+        var activityInfo: ActivityInfo? = inputActivityInfo
+        var label: String? = null
+        if (fullPathToActivity != null && activityInfo == null) {
+            try {
+                activityInfo =
+                    packageManager.getActivityInfoCompat(
+                        ComponentName(packageName, fullPathToActivity),
+                        0
+                    )
+            } catch (_: NameNotFoundException) {
+            }
+        }
+        if (activityInfo != null) {
+            label = activityInfo.loadLabel(packageManager).toString()
+        }
+        return label
+    }
+    
     fun isDevMode(context: Context) =
         Settings.Secure.getInt(
             context.contentResolver,
