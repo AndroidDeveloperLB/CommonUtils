@@ -5,7 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.Fragment
+import androidx.fragment.app.*
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
@@ -31,18 +31,25 @@ inline fun <T : ViewBinding> AppCompatActivity.viewBinding(crossinline bindingIn
         bindingInflater.invoke(layoutInflater)
     }
 
-/**usage:  Fragment/DialogFragment(R.layout.first_fragment)
- *  private val binding by viewBinding(FirstFragmentBinding::bind)
- *
- *  class MyDialogFragment : DialogFragment() {
- *  private val binding by viewBinding(FragmentBinding::inflate)
- *  override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
- *  return AlertDialog.Builder(requireContext()).setView(binding.root).create()
- *  }
- *  */
+
+/**usage:  Fragment(R.layout.first_fragment)
+ *  private val binding by viewBinding(FirstFragmentBinding::bind)*/
 fun <T : ViewBinding> Fragment.viewBinding(viewBindingFactory: (View) -> T) =
     FragmentViewBindingDelegate(this, viewBindingFactory)
 
+/** usage:  class MyFragment:DialogFragment()
+ * private val binding by viewBinding(MyFragmentBinding::inflate)
+ * override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+ * return AlertDialog.Builder(requireContext()).setView(binding.root).create()
+ * }
+ * or:
+ *   class MyFragment:DialogFragment(R.layout.fragment) {
+ *   private val binding by viewBinding(FragmentBinding::bind)
+ */
+inline fun <T : ViewBinding> DialogFragment.viewBinding(crossinline factory: (LayoutInflater) -> T) =
+    lazy(LazyThreadSafetyMode.NONE) {
+        factory(layoutInflater)
+    }
 
 abstract class BoundActivity<T : ViewBinding>(private val factory: (LayoutInflater) -> T) :
     AppCompatActivity() {
