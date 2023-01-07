@@ -55,7 +55,8 @@ object PreferenceUtil {
         pref.entries = entries
         pref.setOnPreferenceChangeListener { _, newValue ->
             val newValueStr = newValue.toString()
-            return@setOnPreferenceChangeListener listener?.onChosenPreference(prefKey, newValueStr) ?: true
+            return@setOnPreferenceChangeListener listener?.onChosenPreference(prefKey, newValueStr)
+                ?: true
         }
         return pref
     }
@@ -88,6 +89,7 @@ object PreferenceUtil {
     ) {
         putStringPref(context, prefKeyResId, enumValue?.name)
     }
+
     // enumset
     fun <EnumType : Enum<EnumType>> getEnumSetPref(
         context: Context,
@@ -218,6 +220,7 @@ object PreferenceUtil {
         return PreferenceManager.getDefaultSharedPreferences(context)
             .getBoolean(prefKey, defaultValue)
     }
+
     // boolean
     fun getBooleanPref(
         context: Context,
@@ -337,14 +340,33 @@ object PreferenceUtil {
     }
 
     // preference deletion
+    
     fun removePreference(context: Context, @StringRes prefKeyResId: Int) {
         val prefKey = context.getString(prefKeyResId)
         val preferences = PreferenceManager.getDefaultSharedPreferences(context)
         preferences.edit().remove(prefKey).apply()
     }
+    
+    fun removePreference(context: Context, @StringRes vararg prefKeyResIds: Int ) {
+        val editor = PreferenceManager.getDefaultSharedPreferences(context).edit()
+        prefKeyResIds.forEach { prefKeyResId->
+            val prefKey = context.getString(prefKeyResId)
+            editor.remove(prefKey)
+        }
+        editor.apply()
+    }
 
     fun removePreference(context: Context, prefKey: String) {
         PreferenceManager.getDefaultSharedPreferences(context).edit().remove(prefKey).apply()
+    }
+
+    @AnyThread
+    fun removePreferences(context: Context, vararg prefKeys: String) {
+        val editor = PreferenceManager.getDefaultSharedPreferences(context).edit()
+        prefKeys.forEach {
+            editor.remove(it)
+        }
+        editor.apply()
     }
 
     fun buildPreferenceParentTree(preferenceScreen: PreferenceScreen): Map<Preference, PreferenceGroup> {
