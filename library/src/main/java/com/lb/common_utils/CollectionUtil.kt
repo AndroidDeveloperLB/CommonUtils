@@ -12,7 +12,7 @@ fun <T, S> MutableMap<T, S>.putMultipleKeysToSameValue(value: S, vararg keys: T)
 
 fun <T> Array<out T>.toArrayList() = ArrayList<T>(this.size).apply { addAll(this@toArrayList) }
 
-fun ArrayList<String>.sortUsingCollator(collator: Collator = Collator.getInstance()) {
+fun ArrayList<String>.sortUsingCollator(collator: Collator = Collator.getInstance(), alternativeComparator: Comparator<String>? = null) {
     if (size <= 1)
         return
     val hashMap = HashMap<String, CollationKey>(size)
@@ -23,11 +23,14 @@ fun ArrayList<String>.sortUsingCollator(collator: Collator = Collator.getInstanc
         val key2 = hashMap.getOrPut(o2) {
             collator.getCollationKey(o2)
         }
-        key1.compareTo(key2)
+        val result = key1.compareTo(key2)
+        if (result != 0)
+            return@sortWith result
+        return@sortWith alternativeComparator?.compare(o1, o2) ?: result
     }
 }
 
-fun <T> ArrayList<T>.sortUsingCollator(collator: Collator = Collator.getInstance(), getStringValue: (input: T) -> String) {
+fun <T> ArrayList<T>.sortUsingCollator(collator: Collator = Collator.getInstance(), getStringValue: (input: T) -> String, alternativeComparator: Comparator<T>? = null) {
     if (size <= 1)
         return
     val hashMap = HashMap<String, CollationKey>(size)
@@ -40,7 +43,10 @@ fun <T> ArrayList<T>.sortUsingCollator(collator: Collator = Collator.getInstance
         val key2 = hashMap.getOrPut(o2Str) {
             collator.getCollationKey(o2Str)
         }
-        key1.compareTo(key2)
+        val result = key1.compareTo(key2)
+        if (result != 0)
+            return@sortWith result
+        return@sortWith alternativeComparator?.compare(o1, o2) ?: result
     }
 }
 
