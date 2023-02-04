@@ -1,10 +1,14 @@
 package com.lb.common_utils
 
 import androidx.annotation.IntRange
-import java.text.NumberFormat
+import java.text.*
 import java.util.*
 
+
 object StringsUtil {
+    private val defaultNormalizationRegex =
+        "[\\p{InCombiningDiacriticalMarks}\\p{IsLm}\\p{IsSk}]+".toRegex()
+
     interface BytesFormatter {
         /**called when the type of the result to format is Long. Example: 123KB
          * @param unitPowerIndex the unit-power we need to format to. Examples: 0 is bytes, 1 is kb, 2 is mb, etc...
@@ -21,7 +25,15 @@ object StringsUtil {
         fun onFormatDouble(valueToFormat: Double, unitPowerIndex: Int, isMetric: Boolean): String
     }
 
-    val defaultBytesFormatter = object : BytesFormatter {
+    /**removes Diacritic signs from text to be able to search them easier. Works only on some languages. Example : "ā" becomes "a" */
+    fun normalizeIfNeeded(string: CharSequence, form: Normalizer.Form = Normalizer.Form.NFD, regex: Regex = defaultNormalizationRegex): CharSequence {
+        if (Normalizer.isNormalized(string, form))
+            return string
+        val normalized = Normalizer.normalize(string, form)
+        return normalized.replace(regex, "")
+    }
+
+    private val defaultBytesFormatter = object : BytesFormatter {
         val numberFormat = NumberFormat.getNumberInstance(Locale.ROOT).also {
             it.maximumFractionDigits = 2
             it.minimumFractionDigits = 0
