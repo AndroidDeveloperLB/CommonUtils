@@ -33,13 +33,13 @@ fun PackageManager.resolveActivityCompat(intent: Intent, flags: Long = 0L): Reso
     return resolveActivity(intent, flags.toInt())
 }
 
-fun PackageManager.getActivityInfoCompat(componentName: ComponentName, flags: Long = 0L):ActivityInfo? {
+fun PackageManager.getActivityInfoCompat(componentName: ComponentName, flags: Long = 0L): ActivityInfo? {
     try {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
             return getActivityInfo(componentName, PackageManager.ComponentInfoFlags.of(flags))
         @Suppress("DEPRECATION")
         return getActivityInfo(componentName, flags.toInt())
-    }catch (_:NameNotFoundException){
+    } catch (_: NameNotFoundException) {
     }
     return null
 }
@@ -51,7 +51,7 @@ object SystemUtils {
      * Will first try using the activityInfo, and then the path to it.
      */
     fun getActivityLabel(packageManager: PackageManager, packageName: String, inputActivityInfo: ActivityInfo?,
-                         fullPathToActivity: String?
+        fullPathToActivity: String?
     ): String? {
         var activityInfo: ActivityInfo? = inputActivityInfo
         var label: String? = null
@@ -153,6 +153,7 @@ object SystemUtils {
         }.getOrDefault(1)
     }
 
+    //    https://stackoverflow.com/a/21505193/878126
     val isProbablyRunningOnEmulator: Boolean by lazy {
         // Android SDK emulator
         return@lazy ((Build.MANUFACTURER == "Google" && Build.BRAND == "google" &&
@@ -180,7 +181,7 @@ object SystemUtils {
                 || Build.BRAND.startsWith("generic") && Build.DEVICE.startsWith("generic")
                 || Build.PRODUCT == "google_sdk"
                 // another Android SDK emulator check
-                ||  SystemProperties.getProp("ro.kernel.qemu") == "1")
+                || SystemProperties.getProp("ro.kernel.qemu") == "1")
     }
 
     /**@return true iff we've detected that MIUI OS has MIUI optimization enabled. Returns null when failed to detect anything about it*/
