@@ -12,8 +12,6 @@ fun <T, S> MutableMap<T, S>.putMultipleKeysToSameValue(value: S, vararg keys: T)
 
 fun <T> Array<out T>.toArrayList() = ArrayList<T>(this.size).apply { addAll(this@toArrayList) }
 
-
-
 fun ArrayList<String>.sortUsingCollator(collator: Collator = Collator.getInstance()) {
     if (size <= 1)
         return
@@ -29,7 +27,7 @@ fun ArrayList<String>.sortUsingCollator(collator: Collator = Collator.getInstanc
     }
 }
 
-fun <T : Comparable<T>> ArrayList<T>.sortUsingCollator(collator: Collator = Collator.getInstance(), getStringValue: (input: T) -> String) {
+fun <T> ArrayList<T>.sortUsingCollator(collator: Collator = Collator.getInstance(), getStringValue: (input: T) -> String) {
     if (size <= 1)
         return
     val hashMap = HashMap<String, CollationKey>(size)
@@ -45,7 +43,6 @@ fun <T : Comparable<T>> ArrayList<T>.sortUsingCollator(collator: Collator = Coll
         key1.compareTo(key2)
     }
 }
-
 
 object CollectionUtil {
     fun <T> isEmpty(arr: Array<T>?): Boolean {
