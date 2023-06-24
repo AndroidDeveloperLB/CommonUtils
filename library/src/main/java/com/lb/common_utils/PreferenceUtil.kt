@@ -1,6 +1,6 @@
 package com.lb.common_utils
 
-import android.content.Context
+import android.content.*
 import androidx.annotation.*
 import androidx.preference.*
 import org.json.*
@@ -9,7 +9,21 @@ import java.util.*
 fun PreferenceFragmentCompat.findPreference(@StringRes prefKey: Int): Preference =
     findPreference(getString(prefKey))!!
 
+@Suppress("unused")
 object PreferenceUtil {
+    @Volatile
+    private var sharedPreferences: SharedPreferences? = null
+
+    fun getDefaultSharedPreferences(context: Context): SharedPreferences {
+        this.sharedPreferences?.let { return it }
+        synchronized(this) {
+            this.sharedPreferences?.let { return it }
+            val result = PreferenceManager.getDefaultSharedPreferences(context)!!
+            this.sharedPreferences = result
+            return result
+        }
+    }
+
     fun prepareListPreference(
         fragment: PreferenceFragmentCompat,
         prefKeyId: Int, //
@@ -45,7 +59,7 @@ object PreferenceUtil {
     ): ListPreference {
         val prefKey = fragment.getString(prefKeyId)
         val pref = fragment.findPreference<ListPreference>(prefKey)
-        val currentValue = PreferenceManager.getDefaultSharedPreferences(fragment.activity!!)
+        val currentValue = getDefaultSharedPreferences(fragment.activity!!)
             .getString(prefKey, null)
         pref!!.setDefaultValue(defaultValue)
         pref.summary = "%s"
@@ -163,8 +177,7 @@ object PreferenceUtil {
 
     // string
     fun getStringPref(context: Context, prefKey: String, defaultValue: String?): String? =
-        PreferenceManager.getDefaultSharedPreferences(context)
-            .getString(prefKey, defaultValue)
+        getDefaultSharedPreferences(context).getString(prefKey, defaultValue)
 
     fun getStringPref(
         context: Context,
@@ -175,8 +188,7 @@ object PreferenceUtil {
         val defaultValue = if (prefDefaultValueResId == 0) null else context.resources.getString(
             prefDefaultValueResId
         )
-        return PreferenceManager.getDefaultSharedPreferences(context)
-            .getString(prefKey, defaultValue)
+        return getDefaultSharedPreferences(context).getString(prefKey, defaultValue)
     }
 
     fun getStringPref(
@@ -185,13 +197,13 @@ object PreferenceUtil {
         defaultValue: String?
     ): String? {
         val prefKey = context.getString(prefKeyResId)
-        return PreferenceManager.getDefaultSharedPreferences(context)
+        return getDefaultSharedPreferences(context)
             .getString(prefKey, defaultValue)
     }
 
     fun putStringPref(context: Context, @StringRes prefKeyResId: Int, newValue: String?) {
         val prefKey = context.getString(prefKeyResId)
-        val preferences = PreferenceManager.getDefaultSharedPreferences(context)
+        val preferences = getDefaultSharedPreferences(context)
         preferences.edit().putString(prefKey, newValue).apply()
     }
 
@@ -201,7 +213,7 @@ object PreferenceUtil {
         @StringRes prefKeyResId: Int,
         @BoolRes prefDefaultValueResId: Int
     ): Boolean {
-        return PreferenceManager.getDefaultSharedPreferences(context).getBoolean(
+        return getDefaultSharedPreferences(context).getBoolean(
             context.getString(prefKeyResId),
             context.resources.getBoolean(prefDefaultValueResId)
         )
@@ -212,13 +224,12 @@ object PreferenceUtil {
         prefKey: String,
         @BoolRes prefDefaultValueResId: Int
     ): Boolean {
-        return PreferenceManager.getDefaultSharedPreferences(context)
+        return getDefaultSharedPreferences(context)
             .getBoolean(prefKey, context.resources.getBoolean(prefDefaultValueResId))
     }
 
     fun getBooleanPref(context: Context, prefKey: String, defaultValue: Boolean): Boolean {
-        return PreferenceManager.getDefaultSharedPreferences(context)
-            .getBoolean(prefKey, defaultValue)
+        return getDefaultSharedPreferences(context).getBoolean(prefKey, defaultValue)
     }
 
     // boolean
@@ -227,13 +238,12 @@ object PreferenceUtil {
         @StringRes prefKeyResId: Int,
         defaultValue: Boolean
     ): Boolean {
-        return PreferenceManager.getDefaultSharedPreferences(context)
-            .getBoolean(context.getString(prefKeyResId), defaultValue)
+        return getDefaultSharedPreferences(context).getBoolean(context.getString(prefKeyResId), defaultValue)
     }
 
     fun putBooleanPref(context: Context, @StringRes prefKeyResId: Int, newValue: Boolean) {
         val prefKey = context.getString(prefKeyResId)
-        val preferences = PreferenceManager.getDefaultSharedPreferences(context)
+        val preferences = getDefaultSharedPreferences(context)
         preferences.edit().putBoolean(prefKey, newValue).apply()
     }
 
@@ -247,12 +257,12 @@ object PreferenceUtil {
         val defaultValue = if (prefDefaultValueResId == 0) -1 else context.resources.getInteger(
             prefDefaultValueResId
         )
-        return PreferenceManager.getDefaultSharedPreferences(context).getInt(prefKey, defaultValue)
+        return getDefaultSharedPreferences(context).getInt(prefKey, defaultValue)
     }
 
     fun getIntPref(context: Context, @StringRes prefKeyResId: Int, defaultValue: Int): Int {
         val prefKey = context.getString(prefKeyResId)
-        return PreferenceManager.getDefaultSharedPreferences(context).getInt(prefKey, defaultValue)
+        return getDefaultSharedPreferences(context).getInt(prefKey, defaultValue)
     }
 
     /**
@@ -260,25 +270,25 @@ object PreferenceUtil {
      */
     fun getIntPref(context: Context, @StringRes prefKeyResId: Int): Int? {
         val prefKey = context.getString(prefKeyResId)
-        val preferences = PreferenceManager.getDefaultSharedPreferences(context)
+        val preferences = getDefaultSharedPreferences(context)
         return if (!preferences.contains(prefKey)) null else preferences.getInt(prefKey, -1)
     }
 
     fun putIntPref(context: Context, @StringRes prefKeyResId: Int, newValue: Int) {
         val prefKey = context.getString(prefKeyResId)
-        val preferences = PreferenceManager.getDefaultSharedPreferences(context)
+        val preferences = getDefaultSharedPreferences(context)
         preferences.edit().putInt(prefKey, newValue).apply()
     }
 
     fun putLongPref(context: Context, @StringRes prefKeyResId: Int, newValue: Long) {
         val prefKey = context.getString(prefKeyResId)
-        val preferences = PreferenceManager.getDefaultSharedPreferences(context)
+        val preferences = getDefaultSharedPreferences(context)
         preferences.edit().putLong(prefKey, newValue).apply()
     }
 
     fun getLongPref(context: Context, @StringRes prefKeyResId: Int): Long? {
         val prefKey = context.getString(prefKeyResId)
-        val preferences = PreferenceManager.getDefaultSharedPreferences(context)
+        val preferences = getDefaultSharedPreferences(context)
         return if (!preferences.contains(prefKey)) null else preferences.getLong(prefKey, -1)
     }
 
@@ -290,7 +300,7 @@ object PreferenceUtil {
     ): Float {
         val prefKey = context.getString(prefKeyResId)
         val res = context.resources
-        val preferences = PreferenceManager.getDefaultSharedPreferences(context)
+        val preferences = getDefaultSharedPreferences(context)
         val string = preferences.getString(prefKey, null)
             ?: return res.getDimension(prefDefaultValueResId) / res.displayMetrics.density
         return java.lang.Float.parseFloat(string)
@@ -306,7 +316,7 @@ object PreferenceUtil {
         @StringRes prefKeyResId: Int,
         newValue: Collection<String>?
     ) {
-        val editor = PreferenceManager.getDefaultSharedPreferences(context).edit()
+        val editor = getDefaultSharedPreferences(context).edit()
         val key = context.getString(prefKeyResId)
         if (newValue == null)
             editor.remove(key).apply()
@@ -316,7 +326,7 @@ object PreferenceUtil {
 
     fun getStringSet(context: Context, @StringRes prefKeyResId: Int): Set<String>? {
         val key = context.getString(prefKeyResId)
-        val str = PreferenceManager.getDefaultSharedPreferences(context).getString(key, null)
+        val str = getDefaultSharedPreferences(context).getString(key, null)
             ?: return null
         try {
             val jsonArray = JSONArray(str)
@@ -326,7 +336,7 @@ object PreferenceUtil {
             return result
         } catch (e: JSONException) {
             e.printStackTrace()
-            PreferenceManager.getDefaultSharedPreferences(context).edit().remove(key).apply()
+            getDefaultSharedPreferences(context).edit().remove(key).apply()
         }
 
         return null
@@ -335,21 +345,21 @@ object PreferenceUtil {
     // preference existence
     fun hasPreference(context: Context, @StringRes prefKeyResId: Int): Boolean {
         val prefKey = context.getString(prefKeyResId)
-        val preferences = PreferenceManager.getDefaultSharedPreferences(context)
+        val preferences = getDefaultSharedPreferences(context)
         return preferences.contains(prefKey)
     }
 
     // preference deletion
-    
+
     fun removePreference(context: Context, @StringRes prefKeyResId: Int) {
         val prefKey = context.getString(prefKeyResId)
-        val preferences = PreferenceManager.getDefaultSharedPreferences(context)
+        val preferences = getDefaultSharedPreferences(context)
         preferences.edit().remove(prefKey).apply()
     }
-    
-    fun removePreference(context: Context, @StringRes vararg prefKeyResIds: Int ) {
-        val editor = PreferenceManager.getDefaultSharedPreferences(context).edit()
-        prefKeyResIds.forEach { prefKeyResId->
+
+    fun removePreference(context: Context, @StringRes vararg prefKeyResIds: Int) {
+        val editor = getDefaultSharedPreferences(context).edit()
+        prefKeyResIds.forEach { prefKeyResId ->
             val prefKey = context.getString(prefKeyResId)
             editor.remove(prefKey)
         }
@@ -357,12 +367,12 @@ object PreferenceUtil {
     }
 
     fun removePreference(context: Context, prefKey: String) {
-        PreferenceManager.getDefaultSharedPreferences(context).edit().remove(prefKey).apply()
+        getDefaultSharedPreferences(context).edit().remove(prefKey).apply()
     }
 
     @AnyThread
     fun removePreferences(context: Context, vararg prefKeys: String) {
-        val editor = PreferenceManager.getDefaultSharedPreferences(context).edit()
+        val editor = getDefaultSharedPreferences(context).edit()
         prefKeys.forEach {
             editor.remove(it)
         }
