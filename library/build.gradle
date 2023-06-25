@@ -29,8 +29,18 @@ android {
         viewBinding true
     }
     namespace 'com.lb.common_utils'
-}
 
+
+}
+afterEvaluate {
+    publishing {
+        publications {
+            release(MavenPublication) {
+                from components.release
+            }
+        }
+    }
+}
 dependencies {
     implementation 'androidx.core:core-ktx:1.10.1'
     implementation 'com.google.android.material:material:1.9.0'
