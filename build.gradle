@@ -2,7 +2,7 @@ buildscript {
     repositories {
         google()
         mavenCentral()
-        gradlePluginPortal()
+//        gradlePluginPortal()
     }
     dependencies {
         //        https://mvnrepository.com/artifact/com.android.tools.build/gradle?repo=google
