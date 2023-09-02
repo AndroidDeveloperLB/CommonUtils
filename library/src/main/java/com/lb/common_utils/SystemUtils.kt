@@ -2,24 +2,39 @@ package com.lb.common_utils
 
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.app.ActivityManager
+import android.app.ApplicationExitInfo
 import android.content.*
 import android.content.pm.*
 import android.content.pm.PackageManager.NameNotFoundException
+import android.content.res.Resources
 import android.net.ConnectivityManager
 import android.os.*
 import android.provider.Settings
+import android.system.OsConstants
 import android.view.WindowManager
+import androidx.annotation.RequiresApi
 import androidx.annotation.RequiresPermission
 import androidx.core.content.ContextCompat
 import java.io.File
+import java.util.Locale
 import java.util.regex.Pattern
 import kotlin.math.max
+
+@RequiresApi(Build.VERSION_CODES.R)
+fun ApplicationExitInfo.wasKilledByLowMemory(): Boolean {
+    return if (ActivityManager.isLowMemoryKillReportSupported()) reason == ApplicationExitInfo.REASON_LOW_MEMORY
+    else reason == ApplicationExitInfo.REASON_SIGNALED && status == OsConstants.SIGKILL
+}
 
 /**uses application context to make sure it will avoid memory leaks*/
 inline fun <reified T : Any> Context.getSystemServiceCompat(): T =
     ContextCompat.getSystemService(applicationContext, T::class.java)!!
 
-fun PackageManager.queryIntentActivitiesCompat(intent: Intent, flags: Long = 0L): MutableList<ResolveInfo> {
+fun PackageManager.queryIntentActivitiesCompat(
+    intent: Intent,
+    flags: Long = 0L
+): MutableList<ResolveInfo> {
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
         return queryIntentActivities(intent, PackageManager.ResolveInfoFlags.of(flags))
     @Suppress("DEPRECATION")
@@ -33,7 +48,10 @@ fun PackageManager.resolveActivityCompat(intent: Intent, flags: Long = 0L): Reso
     return resolveActivity(intent, flags.toInt())
 }
 
-fun PackageManager.getActivityInfoCompat(componentName: ComponentName, flags: Long = 0L): ActivityInfo? {
+fun PackageManager.getActivityInfoCompat(
+    componentName: ComponentName,
+    flags: Long = 0L
+): ActivityInfo? {
     try {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
             return getActivityInfo(componentName, PackageManager.ComponentInfoFlags.of(flags))
@@ -50,7 +68,8 @@ object SystemUtils {
      * returns the label of the specified activity.
      * Will first try using the activityInfo, and then the path to it.
      */
-    fun getActivityLabel(packageManager: PackageManager, packageName: String, inputActivityInfo: ActivityInfo?,
+    fun getActivityLabel(
+        packageManager: PackageManager, packageName: String, inputActivityInfo: ActivityInfo?,
         fullPathToActivity: String?
     ): String? {
         var activityInfo: ActivityInfo? = inputActivityInfo
@@ -163,7 +182,9 @@ object SystemUtils {
                         && Build.MODEL.startsWith("sdk_gphone_"))
                         //alternative
                         || (Build.FINGERPRINT.startsWith("google/sdk_gphone64_")
-                        && (Build.FINGERPRINT.endsWith(":userdebug/dev-keys") || Build.FINGERPRINT.endsWith(":user/release-keys"))
+                        && (Build.FINGERPRINT.endsWith(":userdebug/dev-keys") || Build.FINGERPRINT.endsWith(
+                    ":user/release-keys"
+                ))
                         && Build.PRODUCT.startsWith("sdk_gphone64_")
                         && Build.MODEL.startsWith("sdk_gphone64_"))))
                 //
@@ -173,7 +194,10 @@ object SystemUtils {
                 || Build.MODEL.contains("Emulator")
                 || Build.MODEL.contains("Android SDK built for x86")
                 //bluestacks
-                || "QC_Reference_Phone" == Build.BOARD && !"Xiaomi".equals(Build.MANUFACTURER, ignoreCase = true)
+                || "QC_Reference_Phone" == Build.BOARD && !"Xiaomi".equals(
+            Build.MANUFACTURER,
+            ignoreCase = true
+        )
                 //bluestacks
                 || Build.MANUFACTURER.contains("Genymotion")
                 || Build.HOST.startsWith("Build")
@@ -252,4 +276,29 @@ object SystemUtils {
     }
 
     fun getArchitecture() = kotlin.runCatching { System.getProperty("os.arch") }.getOrNull() ?: ""
+
+    /**returns a list of all current locales, or null if not needed as there aren't at least 2 (if it's one, it's the default locale anyway).
+     * @param haveFirstAsCurrentLocale when true, makes sure the first locale is also the default one. If not, it depends on what you've set as locale*/
+    //        https://stackoverflow.com/a/77000208/878126
+    fun getLocalesList(haveFirstAsCurrentLocale: Boolean = true): ArrayList<Locale>? {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {
+            return null
+        }
+        val localeList = Resources.getSystem().configuration.locales
+        if (localeList.size() <= 1)
+            return null
+        val defaultLocale =
+            if (haveFirstAsCurrentLocale) Locale.getDefault()
+            else null
+        val result = ArrayList<Locale>(localeList.size())
+        if (defaultLocale != null)
+            result.add(defaultLocale)
+        for (i in 0 until localeList.size()) {
+            val locale = localeList[i]!!
+            if (locale == defaultLocale)
+                continue
+            result.add(locale)
+        }
+        return result
+    }
 }
