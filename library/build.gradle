@@ -10,7 +10,7 @@ android {
     defaultConfig {
         minSdk 19
         targetSdk 34
-//        multiDexEnabled true
+        consumerProguardFiles "consumer-rules.pro"
     }
 
     buildTypes {
@@ -19,12 +19,11 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
-//        coreLibraryDesugaringEnabled true
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
     }
     kotlinOptions {
-        jvmTarget = "1.8"
+        jvmTarget = "17"
     }
     buildFeatures {
         viewBinding true
@@ -47,6 +46,4 @@ dependencies {
     implementation 'com.google.android.material:material:1.9.0'
     implementation 'androidx.work:work-runtime-ktx:2.8.1'
     implementation 'androidx.preference:preference-ktx:1.2.1'
-//    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.0.3'
-
 }
