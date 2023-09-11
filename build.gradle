@@ -5,7 +5,7 @@ buildscript {
     }
     dependencies {
         //        https://mvnrepository.com/artifact/com.android.tools.build/gradle?repo=google
-        classpath 'com.android.tools.build:gradle:8.1.1'
+        classpath 'com.android.tools.build:gradle:8.1.0'
         //        https://kotlinlang.org/docs/reference/using-gradle.html https://plugins.gradle.org/plugin/org.jetbrains.kotlin.android
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.9.10"
     }
