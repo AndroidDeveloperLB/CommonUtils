@@ -306,16 +306,20 @@ object SystemUtils {
     }
 
 
-    /**used for Admob test ads :
+    /**used for Admob test ads and constent testing:
+     *  Admob test ads usage :
+     *  https://developers.google.com/admob/android/test-ads
+     *
      *  val deviceIds = arrayListOf(AdRequest.DEVICE_ID_EMULATOR)
-     *  getDeviceHashedId(context)?.let { deviceIds.add(it.uppercase(Locale.ROOT)) }
+     *  getDeviceHashedId(context)?.let { deviceIds.add(it) }
      *  MobileAds.setRequestConfiguration(RequestConfiguration.Builder().setTestDeviceIds(deviceIds).build())
      *
-     *  But also for ads consent testing:
+     *  ads consent testing:
+     *  https://developers.google.com/admob/android/privacy
      *
      *  val debugSettings = ConsentDebugSettings.Builder(app)
      *           .setDebugGeography(ConsentDebugSettings.DebugGeography....)
-     *           .addTestDeviceHashedId(getDeviceHashedId(app)!!.uppercase())
+     *           .addTestDeviceHashedId(getDeviceHashedId(app)!!)
      *           .build()
      * */
     @SuppressLint("HardwareIds")
@@ -328,8 +332,9 @@ object SystemUtils {
             for (i in array.indices)
                 sb.append(Integer.toHexString(array[i].toInt() and 0xFF or 0x100).substring(1, 3))
             //            Log.d("AppLog", "getDeviceIdForAdMobTestAds:$sb")
-            return "$sb"
-        } catch (_: NoSuchAlgorithmException) {
+            return "$sb".uppercase(Locale.ROOT)
+        } catch (e: NoSuchAlgorithmException) {
+            e.printStackTrace()
         }
         return null
     }
