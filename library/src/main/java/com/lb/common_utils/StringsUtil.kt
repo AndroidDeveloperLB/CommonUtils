@@ -154,31 +154,4 @@ object StringsUtil {
         return bytesFormatter.onFormatLong(bytesLeft, unitPowerIndex, isMetric)
     }
 
-/**used for Admob test ads :
- *  val deviceIds = arrayListOf(AdRequest.DEVICE_ID_EMULATOR)
- *  getDeviceHashedId(context)?.let { deviceIds.add(it.uppercase(Locale.ROOT)) }
- *  MobileAds.setRequestConfiguration(RequestConfiguration.Builder().setTestDeviceIds(deviceIds).build())
- *
- *  But also for ads consent testing:
- *
- *  val debugSettings = ConsentDebugSettings.Builder(app)
- *           .setDebugGeography(ConsentDebugSettings.DebugGeography....)
- *           .addTestDeviceHashedId(getDeviceHashedId(app)!!.uppercase())
- *           .build()
- * */
-    @SuppressLint("HardwareIds")
-    fun getDeviceHashedId(context: Application): String? {
-        val md5 = Settings.Secure.getString(context.contentResolver, Settings.Secure.ANDROID_ID)
-        try {
-            val md = MessageDigest.getInstance("MD5")
-            val array = md.digest(md5.toByteArray())
-            val sb = StringBuilder()
-            for (i in array.indices)
-                sb.append(Integer.toHexString(array[i].toInt() and 0xFF or 0x100).substring(1, 3))
-            //            Log.d("AppLog", "getDeviceIdForAdMobTestAds:$sb")
-            return "$sb"
-        } catch (_: NoSuchAlgorithmException) {
-        }
-        return null
-    }
 }
