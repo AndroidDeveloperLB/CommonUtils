@@ -16,11 +16,11 @@ import java.util.*
  * 2f->"2"
  * -2.0f->"-2"
  * */
-fun Float.toStringWithoutDecimalPointIfPossible(f: Float): String {
-    val i = f.toInt()
-    if (f == i.toFloat())
+fun Float.toStringWithoutDecimalPointIfPossible( ): String {
+    val i = toInt()
+    if (this == i.toFloat())
         return "$i"
-    return "$f"
+    return "$this"
 }
 
 fun String?.toJSONObject(): JSONObject? {
