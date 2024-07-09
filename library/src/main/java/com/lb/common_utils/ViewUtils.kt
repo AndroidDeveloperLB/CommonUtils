@@ -14,6 +14,7 @@ fun BadgeDrawable.attachToView(anchor: View, customBadgeParent: FrameLayout?) {
     }
 }
 
+
 object ViewUtils {
 
 }

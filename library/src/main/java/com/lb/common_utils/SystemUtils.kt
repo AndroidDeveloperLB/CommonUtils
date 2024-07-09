@@ -32,11 +32,11 @@ fun ApplicationExitInfo.wasKilledByLowMemory(): Boolean {
 
 /**uses application context to make sure it will avoid memory leaks*/
 inline fun <reified T : Any> Context.getSystemServiceCompat(): T =
-    ContextCompat.getSystemService(applicationContext, T::class.java)!!
+        ContextCompat.getSystemService(applicationContext, T::class.java)!!
 
 fun PackageManager.queryIntentActivitiesCompat(
-    intent: Intent,
-    flags: Long = 0L
+        intent: Intent,
+        flags: Long = 0L
 ): MutableList<ResolveInfo> {
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
         return queryIntentActivities(intent, PackageManager.ResolveInfoFlags.of(flags))
@@ -52,8 +52,8 @@ fun PackageManager.resolveActivityCompat(intent: Intent, flags: Long = 0L): Reso
 }
 
 fun PackageManager.getActivityInfoCompat(
-    componentName: ComponentName,
-    flags: Long = 0L
+        componentName: ComponentName,
+        flags: Long = 0L
 ): ActivityInfo? {
     try {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
@@ -72,18 +72,18 @@ object SystemUtils {
      * Will first try using the activityInfo, and then the path to it.
      */
     fun getActivityLabel(
-        packageManager: PackageManager, packageName: String, inputActivityInfo: ActivityInfo?,
-        fullPathToActivity: String?
+            packageManager: PackageManager, packageName: String, inputActivityInfo: ActivityInfo?,
+            fullPathToActivity: String?
     ): String? {
         var activityInfo: ActivityInfo? = inputActivityInfo
         var label: String? = null
         if (fullPathToActivity != null && activityInfo == null) {
             try {
                 activityInfo =
-                    packageManager.getActivityInfoCompat(
-                        ComponentName(packageName, fullPathToActivity),
-                        0
-                    )
+                        packageManager.getActivityInfoCompat(
+                                ComponentName(packageName, fullPathToActivity),
+                                0
+                        )
             } catch (_: NameNotFoundException) {
             }
         }
@@ -94,11 +94,11 @@ object SystemUtils {
     }
 
     fun isDevMode(context: Context) =
-        Settings.Secure.getInt(
-            context.contentResolver,
-            Settings.Global.DEVELOPMENT_SETTINGS_ENABLED,
-            0
-        ) != 0
+            Settings.Secure.getInt(
+                    context.contentResolver,
+                    Settings.Global.DEVELOPMENT_SETTINGS_ENABLED,
+                    0
+            ) != 0
 
     /** returns the max size of the heap, in bytes     */
     private fun getMaxMemInBytes(): Long = Runtime.getRuntime().maxMemory()
@@ -119,36 +119,36 @@ object SystemUtils {
         val usedMemInBytes = maxMemInBytes - availableMemInBytes
         val usedMemInPercentage = usedMemInBytes * 100 / maxMemInBytes
         return "used: " + StringsUtil.bytesIntoHumanReadable(
-            usedMemInBytes,
-            isMetric = false
+                usedMemInBytes,
+                isMetric = false
         ) + " / " +
                 StringsUtil.bytesIntoHumanReadable(
-                    maxMemInBytes,
-                    isMetric = false
+                        maxMemInBytes,
+                        isMetric = false
                 ) + " (" + usedMemInPercentage + "%)"
     }
 
     fun setAppComponentEnabled(context: Context, componentClass: Class<*>, enable: Boolean) {
         val pm = context.packageManager
         val enableFlag =
-            if (enable) PackageManager.COMPONENT_ENABLED_STATE_ENABLED else PackageManager.COMPONENT_ENABLED_STATE_DISABLED
+                if (enable) PackageManager.COMPONENT_ENABLED_STATE_ENABLED else PackageManager.COMPONENT_ENABLED_STATE_DISABLED
         pm.setComponentEnabledSetting(
-            ComponentName(context, componentClass), enableFlag,
-            PackageManager.DONT_KILL_APP
+                ComponentName(context, componentClass), enableFlag,
+                PackageManager.DONT_KILL_APP
         )
     }
 
     @RequiresPermission(allOf = [android.Manifest.permission.WAKE_LOCK])
     fun wakeUp(activity: Activity) {
         @Suppress("DEPRECATION") activity.window.addFlags(
-            WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
+                WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
         )
         val power: PowerManager = activity.getSystemServiceCompat()
         val lock =
-            power.newWakeLock(
-                PowerManager.FULL_WAKE_LOCK or PowerManager.ACQUIRE_CAUSES_WAKEUP or PowerManager.ON_AFTER_RELEASE,
-                activity.packageName + ":wakeup!"
-            )
+                power.newWakeLock(
+                        PowerManager.FULL_WAKE_LOCK or PowerManager.ACQUIRE_CAUSES_WAKEUP or PowerManager.ON_AFTER_RELEASE,
+                        activity.packageName + ":wakeup!"
+                )
         lock.acquire(1000)
         lock.release()
     }
@@ -186,7 +186,7 @@ object SystemUtils {
                         //alternative
                         || (Build.FINGERPRINT.startsWith("google/sdk_gphone64_")
                         && (Build.FINGERPRINT.endsWith(":userdebug/dev-keys") || Build.FINGERPRINT.endsWith(
-                    ":user/release-keys"
+                        ":user/release-keys"
                 ))
                         && Build.PRODUCT.startsWith("sdk_gphone64_")
                         && Build.MODEL.startsWith("sdk_gphone64_"))))
@@ -198,8 +198,8 @@ object SystemUtils {
                 || Build.MODEL.contains("Android SDK built for x86")
                 //bluestacks
                 || "QC_Reference_Phone" == Build.BOARD && !"Xiaomi".equals(
-            Build.MANUFACTURER,
-            ignoreCase = true
+                Build.MANUFACTURER,
+                ignoreCase = true
         )
                 //bluestacks
                 || Build.MANUFACTURER.contains("Genymotion")
@@ -216,7 +216,7 @@ object SystemUtils {
     fun isMiuiOptimizationEnabled(): Boolean? {
         try {
             val miuiOptimizationEnabled: String =
-                SystemProperties.getProp("persist.sys.miui_optimization")
+                    SystemProperties.getProp("persist.sys.miui_optimization")
             if (miuiOptimizationEnabled.isNotEmpty()) return miuiOptimizationEnabled == "true"
             val clazz = Class.forName("android.miui.AppOpsUtils")
             val isOptedOutOfMiuiOptimization = clazz.getMethod("isXOptMode").invoke(null) as Boolean
@@ -228,13 +228,13 @@ object SystemUtils {
 
     fun hasRootManagerSystemApp(context: Context): Boolean {
         val rootAppsPackageNames =
-            arrayOf(
-                "com.topjohnwu.magisk",
-                "eu.chainfire.supersu",
-                "com.koushikdutta.superuser",
-                "com.noshufou.android.su",
-                "me.phh.superuser"
-            )
+                arrayOf(
+                        "com.topjohnwu.magisk",
+                        "eu.chainfire.supersu",
+                        "com.koushikdutta.superuser",
+                        "com.noshufou.android.su",
+                        "me.phh.superuser"
+                )
         rootAppsPackageNames.forEach { rootAppPackageName ->
             try {
                 context.packageManager.getApplicationInfo(rootAppPackageName, 0)
@@ -261,8 +261,8 @@ object SystemUtils {
             return systemPlaces.firstOrNull { File(it, binaryName).exists() } != null
         }
         val places = arrayOf(
-            "/sbin/", "/system/bin/", "/system/xbin/", "/data/local/xbin/", "/data/local/bin/",
-            "/system/sd/xbin/", "/system/bin/failsafe/", "/data/local/"
+                "/sbin/", "/system/bin/", "/system/xbin/", "/data/local/xbin/", "/data/local/bin/",
+                "/system/sd/xbin/", "/system/bin/failsafe/", "/data/local/"
         )
         return places.firstOrNull { File(it, binaryName).exists() } != null
     }
@@ -285,14 +285,16 @@ object SystemUtils {
     //        https://stackoverflow.com/a/77000208/878126
     fun getLocalesList(haveFirstAsCurrentLocale: Boolean = true): ArrayList<Locale>? {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {
+            if (haveFirstAsCurrentLocale)
+                return arrayListOf(Locale.getDefault())
             return null
         }
         val localeList = Resources.getSystem().configuration.locales
         if (localeList.size() <= 1)
             return null
         val defaultLocale =
-            if (haveFirstAsCurrentLocale) Locale.getDefault()
-            else null
+                if (haveFirstAsCurrentLocale) Locale.getDefault()
+                else null
         val result = ArrayList<Locale>(localeList.size())
         if (defaultLocale != null)
             result.add(defaultLocale)
