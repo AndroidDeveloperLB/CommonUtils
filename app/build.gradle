@@ -33,6 +33,7 @@ android {
     }
     buildFeatures {
         viewBinding true
+        buildConfig = false
     }
     namespace 'com.lb.common_utils.sample'
 }
