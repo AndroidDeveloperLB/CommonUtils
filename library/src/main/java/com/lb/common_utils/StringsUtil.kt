@@ -78,7 +78,7 @@ object StringsUtil {
     }
 
     private val defaultBytesFormatter = object : BytesFormatter {
-        val numberFormat = NumberFormat.getNumberInstance(Locale.ROOT).also {
+        val numberFormat = NumberFormat.getNumberInstance(Locale.US).also {
             it.maximumFractionDigits = 2
             it.minimumFractionDigits = 0
         }
