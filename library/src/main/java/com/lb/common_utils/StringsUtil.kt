@@ -78,7 +78,7 @@ object StringsUtil {
     }
 
     private val defaultBytesFormatter = object : BytesFormatter {
-        val numberFormat = NumberFormat.getNumberInstance(Locale.US).also {
+        val numberFormat = NumberFormat.getNumberInstance(Locale.ROOT).also {
             it.maximumFractionDigits = 2
             it.minimumFractionDigits = 0
         }
@@ -102,7 +102,7 @@ object StringsUtil {
             unitPowerIndex: Int,
             isMetric: Boolean
         ): String {
-            return formatByUnit(String.format("%,d", valueToFormat), unitPowerIndex, isMetric)
+            return formatByUnit(String.format(Locale.ROOT,"%,d", valueToFormat), unitPowerIndex, isMetric)
         }
 
         override fun onFormatDouble(

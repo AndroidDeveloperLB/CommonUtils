@@ -334,7 +334,7 @@ object SystemUtils {
             for (i in array.indices)
                 sb.append(Integer.toHexString(array[i].toInt() and 0xFF or 0x100).substring(1, 3))
             //            Log.d("AppLog", "getDeviceIdForAdMobTestAds:$sb")
-            return "$sb".uppercase(Locale.US)
+            return "$sb".uppercase(Locale.ROOT)
         } catch (e: NoSuchAlgorithmException) {
             e.printStackTrace()
         }
