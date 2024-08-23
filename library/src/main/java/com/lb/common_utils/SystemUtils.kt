@@ -112,20 +112,26 @@ object SystemUtils {
         return maxHeapSize - usedMem
     }
 
+    @Throws(ArithmeticException::class)
     @JvmStatic
     fun getHeapMemStats(): String {
         val maxMemInBytes = getMaxMemInBytes()
         val availableMemInBytes = getAvailableMemInBytes()
         val usedMemInBytes = maxMemInBytes - availableMemInBytes
         val usedMemInPercentage = usedMemInBytes * 100 / maxMemInBytes
-        return "used: " + StringsUtil.bytesIntoHumanReadable(
-                usedMemInBytes,
-                isMetric = false
-        ) + " / " +
-                StringsUtil.bytesIntoHumanReadable(
-                        maxMemInBytes,
-                        isMetric = false
-                ) + " (" + usedMemInPercentage + "%)"
+        try {
+            return "used: " + StringsUtil.bytesIntoHumanReadable(
+                    usedMemInBytes,
+                    isMetric = false
+            ) + " / " +
+                    StringsUtil.bytesIntoHumanReadable(
+                            maxMemInBytes,
+                            isMetric = false
+                    ) + " (" + usedMemInPercentage + "%)"
+        } catch (e: java.lang.ArithmeticException) {
+            //For some reason this occurs on some old devices (mostly Android 7)
+            throw ArithmeticException("failed to format heap stats: maxMemInBytes:$maxMemInBytes availableMemInBytes:$availableMemInBytes usedMemInBytes:$usedMemInBytes usedMemInPercentage:$usedMemInPercentage $e")
+        }
     }
 
     fun setAppComponentEnabled(context: Context, componentClass: Class<*>, enable: Boolean) {
