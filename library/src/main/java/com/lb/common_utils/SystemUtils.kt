@@ -123,19 +123,13 @@ object SystemUtils {
     @Throws(ArithmeticException::class)
     @JvmStatic
     fun getHeapMemStats(): String {
-        val maxMemInBytes = getMaxMemInBytes()
-        val availableMemInBytes = getAvailableMemInBytes()
-        val usedMemInBytes = maxMemInBytes - availableMemInBytes
-        val usedMemInPercentage = usedMemInBytes * 100 / maxMemInBytes
+        val maxMemInBytes: Long = getMaxMemInBytes()
+        val availableMemInBytes: Long = getAvailableMemInBytes()
+        val usedMemInBytes: Long = maxMemInBytes - availableMemInBytes
+        val usedMemInPercentage: Long = usedMemInBytes * 100 / maxMemInBytes
         try {
-            return "used: " + StringsUtil.bytesIntoHumanReadable(
-                    usedMemInBytes,
-                    isMetric = false
-            ) + " / " +
-                    StringsUtil.bytesIntoHumanReadable(
-                            maxMemInBytes,
-                            isMetric = false
-                    ) + " (" + usedMemInPercentage + "%)"
+            return "used: " + StringsUtil.bytesIntoHumanReadable(usedMemInBytes, isMetric = false) + " / " +
+                    StringsUtil.bytesIntoHumanReadable(maxMemInBytes, isMetric = false) + " (" + usedMemInPercentage + "%)"
         } catch (e: java.lang.ArithmeticException) {
             //For some reason this occurs on some old devices (mostly Android 7)
             throw ArithmeticException("failed to format heap stats: maxMemInBytes:$maxMemInBytes availableMemInBytes:$availableMemInBytes usedMemInBytes:$usedMemInBytes usedMemInPercentage:$usedMemInPercentage $e")
@@ -348,7 +342,7 @@ object SystemUtils {
             for (i in array.indices)
                 sb.append(Integer.toHexString(array[i].toInt() and 0xFF or 0x100).substring(1, 3))
             //            Log.d("AppLog", "getDeviceIdForAdMobTestAds:$sb")
-            return "$sb".uppercase(Locale.ROOT)
+            return "$sb".uppercase(Locale.ENGLISH)
         } catch (e: NoSuchAlgorithmException) {
             e.printStackTrace()
         }
