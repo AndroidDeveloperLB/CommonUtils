@@ -1,6 +1,7 @@
 package com.lb.common_utils.sample
 
 import android.annotation.SuppressLint
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import com.google.android.material.snackbar.Snackbar
@@ -11,6 +12,7 @@ import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import android.view.Menu
 import android.view.MenuItem
+import com.lb.common_utils.SystemUtils
 import com.lb.common_utils.sample.databinding.ActivityMainBinding
 import kotlin.concurrent.thread
 import kotlin.random.Random
@@ -23,6 +25,7 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         setSupportActionBar(binding.toolbar)
+        Log.d("AppLog", "${SystemUtils.isProbablyRunningOnEmulator}")
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
