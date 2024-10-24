@@ -24,7 +24,7 @@ object SystemProperties {
         }
         var process: Process? = null
         try {
-            process = Runtime.getRuntime().exec("getprop \"$propName\" \"$defaultResult\"")
+            process = Runtime.getRuntime().exec("getprop $propName $defaultResult")
             val reader = BufferedReader(InputStreamReader(process.inputStream))
             return reader.readLine()
         } catch (e: IOException) {
