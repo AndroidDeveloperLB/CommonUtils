@@ -43,8 +43,8 @@ afterEvaluate {
     }
 }
 dependencies {
-    api 'androidx.core:core-ktx:1.13.1'
+    api 'androidx.core:core-ktx:1.15.0'
     api 'com.google.android.material:material:1.12.0'
-    api 'androidx.work:work-runtime-ktx:2.9.1'
+    api 'androidx.work:work-runtime-ktx:2.10.0'
     api 'androidx.preference:preference-ktx:1.2.1'
 }
