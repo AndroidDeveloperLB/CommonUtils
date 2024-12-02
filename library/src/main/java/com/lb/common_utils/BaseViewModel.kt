@@ -3,7 +3,8 @@ package com.lb.common_utils
 import android.annotation.SuppressLint
 import android.app.Application
 import android.content.Context
-import android.os.*
+import android.os.Handler
+import android.os.Looper
 import androidx.lifecycle.AndroidViewModel
 
 /**usage: class MyViewModel(application: Application) : BaseViewModel(application)

@@ -3,7 +3,8 @@ package com.lb.common_utils
 import android.text.SpannableStringBuilder
 import android.text.Spanned
 import android.text.SpannedString
-import java.util.*
+import com.lb.common_utils.SpanFormatter.format
+import java.util.Locale
 import java.util.regex.Pattern
 
 /*

@@ -1,10 +1,22 @@
 package com.lb.common_utils
 
-import android.content.*
-import androidx.annotation.*
-import androidx.preference.*
-import org.json.*
-import java.util.*
+import android.content.Context
+import android.content.SharedPreferences
+import androidx.annotation.AnyThread
+import androidx.annotation.ArrayRes
+import androidx.annotation.BoolRes
+import androidx.annotation.IntegerRes
+import androidx.annotation.StringRes
+import androidx.preference.ListPreference
+import androidx.preference.Preference
+import androidx.preference.PreferenceFragmentCompat
+import androidx.preference.PreferenceGroup
+import androidx.preference.PreferenceManager
+import androidx.preference.PreferenceScreen
+import org.json.JSONArray
+import org.json.JSONException
+import java.util.EnumSet
+import java.util.Stack
 
 fun PreferenceFragmentCompat.findPreference(@StringRes prefKey: Int): Preference =
     findPreference(getString(prefKey))!!

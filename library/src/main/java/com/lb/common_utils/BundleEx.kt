@@ -1,8 +1,10 @@
 package com.lb.common_utils
 
 import android.content.Intent
-import android.os.*
+import android.os.Build
 import android.os.Build.VERSION_CODES
+import android.os.Bundle
+import android.os.Parcelable
 import java.io.Serializable
 
 

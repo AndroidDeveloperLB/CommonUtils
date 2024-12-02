@@ -1,6 +1,7 @@
 package com.lb.common_utils
 
-import java.text.*
+import java.text.CollationKey
+import java.text.Collator
 
 fun Array<*>?.sizeSafe() = this?.size ?: 0
 fun Collection<*>?.sizeSafe() = this?.size ?: 0

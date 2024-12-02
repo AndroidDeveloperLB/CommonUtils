@@ -1,16 +1,12 @@
 package com.lb.common_utils
 
-import android.annotation.SuppressLint
-import android.app.Application
-import android.provider.Settings
 import androidx.annotation.IntRange
 import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
-import java.security.MessageDigest
-import java.security.NoSuchAlgorithmException
-import java.text.*
-import java.util.*
+import java.text.Normalizer
+import java.text.NumberFormat
+import java.util.Locale
 
 /**2.0f->"2"
  * 2f->"2"

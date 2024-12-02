@@ -1,7 +1,10 @@
 package com.lb.common_utils
 
 import android.os.Bundle
-import androidx.fragment.app.*
+import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentActivity
+import androidx.fragment.app.FragmentManager
 
 val DialogFragment.argumentsSafe: Bundle
     get() = arguments ?: Bundle().also { arguments = it }
