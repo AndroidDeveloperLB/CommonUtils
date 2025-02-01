@@ -12,7 +12,7 @@ object AdmobTestAdUnitIds {
     const val BANNER = "ca-app-pub-3940256099942544/6300978111"
 
     /** https://developers.google.com/admob/android/banner/inline-adaptive https://github.com/googleads/googleads-mobile-ios-examples/blob/6def5ddd3f4b0b92b9fc8fec3e88e011c21f36b5/Swift/admob/AdaptiveBannerExample/AdaptiveBannerExample/ViewController.swift#LL28C28-L28C66    https://groups.google.com/g/google-admob-ads-sdk/c/sENzJ0kycfE */
-    const val BANNER_INLINE_ADAPTIVE_ = "ca-app-pub-3940256099942544/2435281174"
+    const val BANNER_INLINE_ADAPTIVE = "ca-app-pub-3940256099942544/2435281174"
 
     /**https://developers.google.com/admob/android/interstitial#always_test_with_test_ads*/
     const val INTERSTITIAL = "ca-app-pub-3940256099942544/1033173712"
