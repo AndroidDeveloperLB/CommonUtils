@@ -1,15 +1,19 @@
 package com.lb.common_utils
 
+import android.annotation.SuppressLint
 import android.graphics.drawable.Drawable
+import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.RatingBar
 import android.widget.TextView
 import android.widget.ViewAnimator
 import androidx.annotation.IdRes
 import androidx.annotation.IntDef
+import androidx.core.view.children
 import androidx.core.view.forEachIndexed
 import androidx.core.view.isVisible
 import com.google.android.material.badge.BadgeDrawable
@@ -106,4 +110,56 @@ object ViewUtils {
     @IntDef(View.VISIBLE, View.INVISIBLE, View.GONE)
     @Retention(AnnotationRetention.SOURCE)
     annotation class Visibility
+
+    /**returns the location of the child view in a LinearLayout, using Gravity values
+     * Fill - view takes entire space
+     * no-gravity - view not found
+     * center-vertical/horizontal - in the middle of multiple other views
+     * the rest are quite obvious:top/bottom/left/right*/
+    @SuppressLint("RtlHardcoded")
+    fun findLocationOfChildInLinearLayout(childView: View, container: LinearLayout): Int {
+        val childCount = container.children.count()
+        if (childCount == 0)
+            return Gravity.NO_GRAVITY
+        if (childCount == 1) {
+            if (container.children.first() == childView)
+                return Gravity.FILL
+            return Gravity.NO_GRAVITY
+        }
+        //handle cases of at least 2 children:
+        if (container.orientation == LinearLayout.HORIZONTAL) {
+            //horizontal
+            for ((index, child) in container.children.withIndex()) {
+                if (child != childView)
+                    continue
+                val isLeftToRight = container.layoutDirection == View.LAYOUT_DIRECTION_LTR
+                //                        TextUtils.getLayoutDirectionFromLocale(Locale.getDefault()) == View.LAYOUT_DIRECTION_LTR
+                return when (index) {
+                    0 -> {
+                        if (isLeftToRight) Gravity.LEFT else Gravity.RIGHT
+                    }
+
+                    childCount - 1 -> {
+                        if (isLeftToRight) Gravity.RIGHT else Gravity.LEFT
+                    }
+
+                    else -> Gravity.CENTER_HORIZONTAL
+                }
+            }
+            return Gravity.FILL
+        }
+        else {
+            //vertical
+            for ((index, child) in container.children.withIndex()) {
+                if (child != childView)
+                    continue
+                return when (index) {
+                    0 -> Gravity.TOP
+                    childCount - 1 -> Gravity.BOTTOM
+                    else -> Gravity.CENTER_VERTICAL
+                }
+            }
+        }
+        return Gravity.NO_GRAVITY
+    }
 }
