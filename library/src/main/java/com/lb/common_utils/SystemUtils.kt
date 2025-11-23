@@ -214,6 +214,8 @@ object SystemUtils {
                         || Build.PRODUCT == "google_sdk"
                         // another Android SDK emulator check
                         || SystemProperties.getProp("ro.kernel.qemu") == "1")
+                // From com.google.firebase.crashlytics.internal.common.CommonUtils.isEmulator
+                || Build.HARDWARE.contains("goldfish") || Build.HARDWARE.contains("ranchu") || Build.PRODUCT.contains("sdk")
     }
 
     /**@return true iff we've detected that MIUI OS has MIUI optimization enabled. Returns null when failed to detect anything about it*/
@@ -231,16 +233,15 @@ object SystemUtils {
         }
     }
 
-    fun hasRootManagerSystemApp(context: Context): Boolean {
+    /**returns true if the bootloader is unlocked. If false, it might still be unlocked as users can hide it*/
+    fun isBootloaderUnlocked() = SystemProperties.getProp("ro.boot.flash.locked") == "0"
+
+
+    fun hasRootManagerAppInstalled(context: Context): Boolean {
         val rootAppsPackageNames =
-                arrayOf(
-                        "com.topjohnwu.magisk",
-                        "eu.chainfire.supersu",
-                        "com.koushikdutta.superuser",
-                        "com.noshufou.android.su",
-                        "me.phh.superuser"
-                )
-        rootAppsPackageNames.forEach { rootAppPackageName ->
+                arrayOf("com.topjohnwu.magisk", "eu.chainfire.supersu",
+                        "com.koushikdutta.superuser", "com.noshufou.android.su", "me.phh.superuser")
+        for (rootAppPackageName in rootAppsPackageNames) {
             try {
                 context.packageManager.getApplicationInfo(rootAppPackageName, 0)
                 return true
@@ -252,24 +253,21 @@ object SystemUtils {
 
     fun hasSuBinary(): Boolean {
         return try {
-            findBinary("su")
+            val binaryName="su"
+            val paths = System.getenv("PATH")
+            if (!paths.isNullOrBlank()) {
+                val systemPlaces: List<String> = paths.split(":")
+                return systemPlaces.firstOrNull { File(it, binaryName).exists() } != null
+            }
+            val places = arrayOf(
+                    "/sbin/", "/system/bin/", "/system/xbin/", "/data/local/xbin/", "/data/local/bin/",
+                    "/system/sd/xbin/", "/system/bin/failsafe/", "/data/local/"
+            )
+            return places.firstOrNull { File(it, binaryName).exists() } != null
         } catch (e: Exception) {
             e.printStackTrace()
             false
         }
-    }
-
-    private fun findBinary(binaryName: String): Boolean {
-        val paths = System.getenv("PATH")
-        if (!paths.isNullOrBlank()) {
-            val systemPlaces: List<String> = paths.split(":")
-            return systemPlaces.firstOrNull { File(it, binaryName).exists() } != null
-        }
-        val places = arrayOf(
-                "/sbin/", "/system/bin/", "/system/xbin/", "/data/local/xbin/", "/data/local/bin/",
-                "/system/sd/xbin/", "/system/bin/failsafe/", "/data/local/"
-        )
-        return places.firstOrNull { File(it, binaryName).exists() } != null
     }
 
     fun getPerformanceClassValue(): Int {
