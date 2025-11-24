@@ -13,8 +13,10 @@ android {
 
     defaultConfig {
         minSdk = 23
-        targetSdk = 36
         consumerProguardFiles("consumer-rules.pro")
+    }
+    lint {
+        targetSdk = 36
     }
 
     buildTypes {
@@ -53,5 +55,4 @@ dependencies {
     api("com.google.android.material:material:1.13.0")
     api("androidx.work:work-runtime-ktx:2.11.0")
     api("androidx.preference:preference-ktx:1.2.1")
-    implementation("androidx.core:core-ktx:1.17.0")
 }
