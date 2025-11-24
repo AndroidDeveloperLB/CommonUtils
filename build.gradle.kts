@@ -5,9 +5,9 @@ buildscript {
     }
     dependencies {
         //        https://mvnrepository.com/artifact/com.android.tools.build/gradle?repo=google
-        classpath 'com.android.tools.build:gradle:8.13.1'
+        classpath("com.android.tools.build:gradle:8.13.1")
         //        https://kotlinlang.org/docs/reference/using-gradle.html https://plugins.gradle.org/plugin/org.jetbrains.kotlin.android
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:2.1.0"
+        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:2.2.0")
     }
 }
 
@@ -18,6 +18,6 @@ allprojects {
     }
 }
 
-tasks.register('clean', Delete) {
-    delete rootProject.buildDir
+tasks.register<Delete>("clean") {
+    delete(rootProject.layout.buildDirectory)
 }
