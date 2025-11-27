@@ -39,6 +39,11 @@ android {
         buildConfig = false
     }
     namespace = "com.lb.common_utils.sample"
+    tasks.withType<KotlinJvmCompile>().configureEach {
+        compilerOptions {
+            jvmTarget.set(JvmTarget.JVM_17)
+        }
+    }
 }
 
 dependencies {

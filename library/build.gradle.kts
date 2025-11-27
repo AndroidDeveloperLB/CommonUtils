@@ -38,8 +38,11 @@ android {
         buildConfig = false
     }
     namespace = "com.lb.common_utils"
-
-
+    tasks.withType<KotlinJvmCompile>().configureEach {
+        compilerOptions {
+            jvmTarget.set(JvmTarget.JVM_17)
+        }
+    }
 }
 afterEvaluate {
     publishing {
@@ -55,4 +58,5 @@ dependencies {
     api("com.google.android.material:material:1.13.0")
     api("androidx.work:work-runtime-ktx:2.11.0")
     api("androidx.preference:preference-ktx:1.2.1")
+    implementation("androidx.core:core-ktx:1.17.0")
 }
