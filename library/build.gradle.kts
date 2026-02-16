@@ -6,6 +6,9 @@ plugins {
     id("maven-publish")
 }
 
+group = "com.lb.common_utils"
+version = "1.0.0"
+
 android {
     compileSdk = 36
 
@@ -33,7 +36,9 @@ android {
     namespace = "com.lb.common_utils"
     
     publishing {
-        singleVariant("release")
+        singleVariant("release") {
+            withSourcesJar()
+        }
     }
 }
 
@@ -45,10 +50,10 @@ tasks.withType<KotlinJvmCompile>().configureEach {
     }
 }
 
-afterEvaluate {
-    publishing {
-        publications {
-            register<MavenPublication>("release") {
+publishing {
+    publications {
+        register<MavenPublication>("release") {
+            afterEvaluate {
                 from(components["release"])
             }
         }
@@ -60,5 +65,4 @@ dependencies {
     api("com.google.android.material:material:1.13.0")
     api("androidx.work:work-runtime-ktx:2.11.1")
     api("androidx.preference:preference-ktx:1.2.1")
-    implementation("androidx.core:core-ktx:1.17.0")
 }
