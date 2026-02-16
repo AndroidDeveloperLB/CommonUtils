@@ -1,10 +1,8 @@
-import org.gradle.kotlin.dsl.withType
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 
 plugins {
     id("com.android.application")
-    id("kotlin-android")
 }
 
 android {
@@ -29,22 +27,18 @@ android {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
     }
-    tasks.withType<KotlinJvmCompile>().configureEach {
-        compilerOptions {
-            jvmTarget.set(JvmTarget.JVM_17)
-        }
-    }
     buildFeatures {
         viewBinding = true
         buildConfig = false
     }
     namespace = "com.lb.common_utils.sample"
-    tasks.withType<KotlinJvmCompile>().configureEach {
-        compilerOptions {
-            jvmTarget.set(JvmTarget.JVM_17)
-            // used to have resource annotations (like DrawableRes) to both fields and parameters
-            freeCompilerArgs.add("-Xannotation-default-target=param-property")
-        }
+}
+
+tasks.withType<KotlinJvmCompile>().configureEach {
+    compilerOptions {
+        jvmTarget.set(JvmTarget.JVM_17)
+        // used to have resource annotations (like DrawableRes) to both fields and parameters
+        freeCompilerArgs.add("-Xannotation-default-target=param-property")
     }
 }
 
