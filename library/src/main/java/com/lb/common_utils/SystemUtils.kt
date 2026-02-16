@@ -328,7 +328,7 @@ object SystemUtils {
      *           .build()
      * */
     @SuppressLint("HardwareIds")
-    fun getDeviceHashedId(context: Application): String? {
+    fun getDeviceHashedId(context: Context): String? {
         val md5 = Settings.Secure.getString(context.contentResolver, Settings.Secure.ANDROID_ID)
         try {
             val md = MessageDigest.getInstance("MD5")

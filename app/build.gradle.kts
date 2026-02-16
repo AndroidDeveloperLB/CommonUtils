@@ -42,6 +42,8 @@ android {
     tasks.withType<KotlinJvmCompile>().configureEach {
         compilerOptions {
             jvmTarget.set(JvmTarget.JVM_17)
+            // used to have resource annotations (like DrawableRes) to both fields and parameters
+            freeCompilerArgs.add("-Xannotation-default-target=param-property")
         }
     }
 }
@@ -50,7 +52,7 @@ dependencies {
     implementation("androidx.core:core-ktx:1.17.0")
     implementation("com.google.android.material:material:1.13.0")
     implementation("androidx.constraintlayout:constraintlayout:2.2.1")
-    implementation("androidx.navigation:navigation-fragment-ktx:2.9.6")
-    implementation("androidx.navigation:navigation-ui-ktx:2.9.6")
+    implementation("androidx.navigation:navigation-fragment-ktx:2.9.7")
+    implementation("androidx.navigation:navigation-ui-ktx:2.9.7")
     implementation(project(":library"))
 }
