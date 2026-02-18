@@ -7,6 +7,7 @@ plugins {
 }
 
 android {
+    namespace = "com.lb.common_utils"
     compileSdk = 36
 
     defaultConfig {
@@ -26,32 +27,16 @@ android {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
     }
+    tasks.withType<KotlinJvmCompile>().configureEach {
+        compilerOptions {
+            jvmTarget.set(JvmTarget.JVM_17)
+        }
+    }
     buildFeatures {
         viewBinding = true
-        buildConfig = false
     }
-    namespace = "com.lb.common_utils"
-
     publishing {
         singleVariant("release")
-    }
-}
-
-tasks.withType<KotlinJvmCompile>().configureEach {
-    compilerOptions {
-        jvmTarget.set(JvmTarget.JVM_17)
-        // used to have resource annotations (like DrawableRes) to both fields and parameters
-        freeCompilerArgs.add("-Xannotation-default-target=param-property")
-    }
-}
-
-afterEvaluate {
-    publishing {
-        publications {
-            register<MavenPublication>("release") {
-                from(components["release"])
-            }
-        }
     }
 }
 
