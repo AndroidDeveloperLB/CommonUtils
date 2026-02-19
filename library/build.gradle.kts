@@ -1,5 +1,6 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
+import org.gradle.api.publish.maven.MavenPublication
 
 plugins {
     id("com.android.library")
@@ -36,7 +37,10 @@ android {
         viewBinding = true
     }
     publishing {
-        singleVariant("release")
+        singleVariant("release") {
+            withSourcesJar()
+            withJavadocJar()
+        }
     }
 }
 
@@ -46,4 +50,17 @@ dependencies {
     api("androidx.work:work-runtime-ktx:2.11.1")
     api("androidx.preference:preference-ktx:1.2.1")
     implementation("androidx.core:core-ktx:1.17.0")
+}
+
+afterEvaluate {
+    publishing {
+        publications {
+            create<MavenPublication>("release") {
+                from(components["release"])
+                groupId = "com.github.AndroidDeveloperLB"
+                artifactId = "CommonUtils"
+                version = "1.0.0"
+            }
+        }
+    }
 }
