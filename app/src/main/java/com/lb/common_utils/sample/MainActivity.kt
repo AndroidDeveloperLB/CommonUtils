@@ -7,15 +7,10 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import androidx.activity.SystemBarStyle
 import androidx.activity.enableEdgeToEdge
-import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat.startActivity
 import androidx.core.net.toUri
 import androidx.core.view.MenuProvider
 import androidx.core.view.ViewCompat
-import androidx.core.view.WindowCompat.enableEdgeToEdge
 import androidx.core.view.WindowInsetsCompat
-import androidx.core.view.setPadding
-import androidx.core.view.updatePadding
 import com.lb.common_utils.BoundActivity
 import com.lb.common_utils.sample.databinding.ActivityMainBinding
 
