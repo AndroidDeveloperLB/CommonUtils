@@ -55,11 +55,8 @@ dependencies {
 afterEvaluate {
     publishing {
         publications {
-            create<MavenPublication>("release") {
+            register<MavenPublication>("release") {
                 from(components["release"])
-                groupId = "com.github.AndroidDeveloperLB"
-                artifactId = "CommonUtils"
-                version = "1.0.0"
             }
         }
     }
