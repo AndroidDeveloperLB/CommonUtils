@@ -1,6 +1,7 @@
 package com.lb.common_utils
 
 import android.content.Intent
+import android.os.BaseBundle
 import android.os.Build
 import android.os.Build.VERSION_CODES
 import android.os.Bundle
@@ -11,14 +12,14 @@ import java.io.Serializable
 fun Intent.getBooleanExtraOrNull(key: String): Boolean? =
     if (this.hasExtra(key)) getBooleanExtra(key, false) else null
 
-fun Bundle.getIntOrNull(key: String): Int? = if (this.containsKey(key)) getInt(key) else null
+fun BaseBundle.getIntOrNull(key: String): Int? = if (this.containsKey(key)) getInt(key) else null
 fun Intent.getIntExtraOrNull(key: String): Int? =
     if (this.hasExtra(key)) getIntExtra(key, 0) else null
 
 fun Intent.getLongExtraOrNull(key: String): Long? =
     if (this.hasExtra(key)) getLongExtra(key, 0L) else null
 
-fun Bundle.getLongOrNull(key: String): Long? =
+fun BaseBundle.getLongOrNull(key: String): Long? =
     if (this.containsKey(key)) this.getLong(key) else null
 
 inline fun <reified T> Intent.getParcelableExtraCompat(key: String): T? = when {
