@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.os.Handler
 import android.os.Looper
 import androidx.annotation.AnyThread
+import androidx.core.os.HandlerCompat
 import androidx.lifecycle.MutableLiveData
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.atomic.AtomicReference
@@ -17,6 +18,9 @@ fun runOnUiThread(runnable: Runnable) {
     if (isUiThread()) runnable.run()
     else uiHandler.post(runnable)
 }
+
+fun Handler.postDelayedWithToken(runnable: Runnable, token: Any?, delayMillis: Long) =
+        HandlerCompat.postDelayed(this, runnable, token, delayMillis)
 
 @AnyThread
 fun runAndWaitForUiThread(runnable: Runnable) {

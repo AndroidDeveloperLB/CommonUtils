@@ -7,6 +7,7 @@ import android.content.SharedPreferences
 import android.content.pm.PackageInfo
 import android.os.Build.VERSION
 import android.os.Build.VERSION_CODES
+import android.os.Bundle
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.ActivityResultLauncher
@@ -70,6 +71,8 @@ fun Fragment.isNotAddedOrActivityFinishingOrDestroyed() =
 fun Fragment.isActivityFinishingOrDestroyed(): Boolean = activity.isFinishedOrFinishing()
 
 fun Activity?.isFinishedOrFinishing(): Boolean = this == null || isFinishing || isDestroyed
+
+fun Fragment.argumentsSafe(): Bundle = arguments ?: Bundle().also { arguments = it }
 
 fun interface OnActivityResultSuccessCallback {
     fun onSuccess(result: ActivityResult)
