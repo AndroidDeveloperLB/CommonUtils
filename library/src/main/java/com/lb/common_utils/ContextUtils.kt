@@ -31,6 +31,15 @@ inline fun <reified T : Activity> Fragment.startActivity(block: Intent.() -> Uni
     startActivity(intent)
 }
 
+fun Lifecycle.runOnDestroy(runnable: () -> Unit) {
+    addObserver(object : DefaultLifecycleObserver {
+        override fun onDestroy(owner: LifecycleOwner) {
+            super.onDestroy(owner)
+            runnable.invoke()
+        }
+    })
+}
+
 fun AppCompatActivity.tryMoveToBack(onBackPressedCallback: OnBackPressedCallback, navController: NavController?) {
     val succeededMovingToBack: Boolean =
             when {

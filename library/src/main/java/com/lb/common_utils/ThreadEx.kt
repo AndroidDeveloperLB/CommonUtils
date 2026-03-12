@@ -13,6 +13,11 @@ val uiHandler = Handler(Looper.getMainLooper())
 fun isUiThread() =
         Looper.getMainLooper().isCurrentThread
 
+fun runOnUiThread(runnable: Runnable) {
+    if (isUiThread()) runnable.run()
+    else uiHandler.post(runnable)
+}
+
 @AnyThread
 fun runAndWaitForUiThread(runnable: Runnable) {
     if (isUiThread()) {
