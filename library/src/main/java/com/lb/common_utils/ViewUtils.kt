@@ -1,6 +1,7 @@
 package com.lb.common_utils
 
 import android.annotation.SuppressLint
+import android.graphics.Rect
 import android.graphics.drawable.Drawable
 import android.view.Gravity
 import android.view.View
@@ -26,6 +27,14 @@ fun BadgeDrawable.attachToView(anchor: View, customBadgeParent: FrameLayout?) {
     anchor.addOnLayoutChangeListener { _, _, _, _, _, _, _, _, _ ->
         updateBadgeCoordinates(anchor, customBadgeParent)
     }
+}
+
+fun ViewGroup.MarginLayoutParams?.clone(): ViewGroup.MarginLayoutParams? = this?.let {
+    ViewGroup.MarginLayoutParams(this)
+}
+
+fun View.getPadding(): Rect {
+    return Rect(paddingLeft, paddingTop, paddingRight, paddingBottom)
 }
 
 fun View?.removeFromParent() = (this?.parent as? ViewGroup?)?.removeView(this)
