@@ -1,6 +1,10 @@
 package com.lb.common_utils
 
 import android.annotation.SuppressLint
+import android.content.Context
+import android.content.res.ColorStateList
+import android.content.res.Resources
+import android.graphics.PorterDuff.Mode
 import android.graphics.Rect
 import android.graphics.drawable.Drawable
 import android.view.Gravity
@@ -12,11 +16,16 @@ import android.widget.LinearLayout
 import android.widget.RatingBar
 import android.widget.TextView
 import android.widget.ViewAnimator
+import androidx.annotation.ColorInt
+import androidx.annotation.DrawableRes
 import androidx.annotation.IdRes
 import androidx.annotation.IntDef
+import androidx.annotation.StringRes
+import androidx.core.graphics.drawable.DrawableCompat
 import androidx.core.view.children
 import androidx.core.view.forEachIndexed
 import androidx.core.view.isVisible
+import androidx.core.widget.ImageViewCompat
 import com.google.android.material.badge.BadgeDrawable
 import com.google.android.material.badge.BadgeUtils
 
@@ -50,6 +59,17 @@ fun ImageView.setImageDrawableOrHide(newDrawable: Drawable?,
     }
 }
 
+fun ImageView.setImageDrawableResIdOrHide(@DrawableRes newDrawableResId: Int?, @ViewUtils.Visibility visibilityWhenEmpty: Int = View.GONE) {
+    if (newDrawableResId == null || newDrawableResId == Resources.ID_NULL) {
+        visibility = visibilityWhenEmpty
+        setImageDrawable(null)
+    } else {
+        isVisible = true
+        setImageResource(newDrawableResId)
+    }
+}
+
+
 fun RatingBar.setRatingOrHide(newRating: Float?, @ViewUtils.Visibility visibilityWhenEmpty: Int = View.GONE) {
     if (newRating == null) {
         visibility = visibilityWhenEmpty
@@ -60,6 +80,27 @@ fun RatingBar.setRatingOrHide(newRating: Float?, @ViewUtils.Visibility visibilit
     }
 }
 
+fun ImageView.setTint(@ColorInt color: Int?) {
+    if (color == null || color == 0) {
+        ImageViewCompat.setImageTintList(this, null)
+        return
+    }
+    ImageViewCompat.setImageTintMode(this, Mode.SRC_ATOP)
+    ImageViewCompat.setImageTintList(this, ColorStateList.valueOf(color))
+}
+
+fun Drawable.getTintedDrawable(context: Context, @ColorInt color: Int): Drawable {
+    val wrapDrawable = DrawableCompat.wrap(mutate())
+    DrawableCompat.setTint(wrapDrawable, color)
+    DrawableCompat.setTintMode(wrapDrawable, Mode.SRC_IN)
+    return wrapDrawable
+}
+
+fun TextView.setTextOrHide(@StringRes stringResId: Int) {
+    if (stringResId == 0)
+        text = null
+    else setText(stringResId)
+}
 
 fun TextView.setTextOrHide(textToSet: CharSequence?, @ViewUtils.Visibility visibilityWhenEmpty: Int = View.GONE) {
     if (textToSet.isNullOrEmpty()) {
@@ -156,8 +197,7 @@ object ViewUtils {
                 }
             }
             return Gravity.FILL
-        }
-        else {
+        } else {
             //vertical
             for ((index, child) in container.children.withIndex()) {
                 if (child != childView)
