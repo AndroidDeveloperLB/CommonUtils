@@ -9,14 +9,14 @@ plugins {
 
 android {
     namespace = "com.lb.common_utils"
-    compileSdk = 36
+    compileSdk = 37
 
     defaultConfig {
         minSdk = 23
         consumerProguardFiles("consumer-rules.pro")
     }
     lint {
-        targetSdk = 36
+        targetSdk = 37
     }
 
     buildTypes {
@@ -46,11 +46,10 @@ android {
 
 dependencies {
     api("androidx.core:core-ktx:1.18.0")
-    api("com.google.android.material:material:1.13.0")
-    api("androidx.work:work-runtime-ktx:2.11.1")
+    api("com.google.android.material:material:1.14.0")
+    api("androidx.work:work-runtime-ktx:2.11.2")
     api("androidx.preference:preference-ktx:1.2.1")
-    implementation("androidx.core:core-ktx:1.18.0")
-    implementation("androidx.navigation:navigation-runtime-ktx:2.9.7")
+    implementation("androidx.navigation:navigation-runtime-ktx:2.9.8")
 }
 
 afterEvaluate {
