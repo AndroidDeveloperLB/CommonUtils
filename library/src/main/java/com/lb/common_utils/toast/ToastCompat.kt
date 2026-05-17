@@ -7,6 +7,7 @@ import android.os.Build
 import android.view.View
 import android.widget.Toast
 import androidx.annotation.StringRes
+import androidx.annotation.UiThread
 
 /**
  * @author drakeet
@@ -90,6 +91,7 @@ private constructor(context: Context, val baseToast: Toast) : Toast(context) {
          * @param duration How long to display the message.  Either [.LENGTH_SHORT] or
          * [.LENGTH_LONG]
          */
+        @UiThread
         fun makeText(context: Context, text: CharSequence?, duration: Int): Toast {
             if (Build.VERSION.SDK_INT != Build.VERSION_CODES.N_MR1)
                 return Toast.makeText(context, text, duration)
@@ -110,6 +112,7 @@ private constructor(context: Context, val baseToast: Toast) : Toast(context) {
          * [.LENGTH_LONG]
          * @throws Resources.NotFoundException if the resource can't be found.
          */
+        @UiThread
         @Throws(NotFoundException::class)
         fun makeText(context: Context, @StringRes resId: Int, duration: Int): Toast {
             if (Build.VERSION.SDK_INT != Build.VERSION_CODES.N_MR1)
