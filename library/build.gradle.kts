@@ -43,19 +43,18 @@ android {
         }
     }
 
+    // 1. Define and register the task cleanly using the standard Gradle API
     val generateNavProguard = tasks.register("generateNavProguard") {
-        // Look for the navigation folder inside the consuming app module, fallback to library resource directory
+        // Dynamically look for the navigation folder inside the module
         val navFolder = file("src/main/res/navigation")
         val outputFile = file(layout.buildDirectory.file("generated/nav-proguard-rules.pro").get().asFile.absolutePath)
 
-        inputs.dir(navFolder)
+        inputs.dir(navFolder).optional(true) // Keeps it safe and ignores if navigation doesn't exist
         outputs.file(outputFile)
 
         doLast {
-            // Only run the parsing logic if the app actually has a navigation folder
+            val classesToKeep = mutableSetOf<String>()
             if (navFolder.exists()) {
-                val classesToKeep = mutableSetOf<String>()
-
                 navFolder.walk().filter { it.extension == "xml" }.forEach { file ->
                     val matches = Regex("""app:argType="([^"]+)"""").findAll(file.readText())
                     matches.forEach { match ->
@@ -65,33 +64,23 @@ android {
                         }
                     }
                 }
-
-                outputFile.parentFile.mkdirs()
-                outputFile.writeText(classesToKeep.joinToString("\n") { "-keepnames class $it" })
-            } else {
-                // Write an empty file so the R8 pipeline task doesn't crash looking for a missing file input
-                outputFile.parentFile.mkdirs()
-                outputFile.writeText("")
             }
+
+            outputFile.parentFile.mkdirs()
+            // FIX: Use unconditional "-keep class" so R8 doesn't strip reflective array lookups
+            outputFile.writeText(classesToKeep.joinToString("\n") { "-keep class $it" })
         }
     }
 
-// Dynamically attach to R8 task safely without hardcoded class types
-    tasks.configureEach {
-        // Match the R8 minification task by name instead of by Class Type to avoid ClassNotFoundException
-        if (name.startsWith("minify") && name.endsWith("WithR8")) {
-            dependsOn(generateNavProguard)
-
-            // Safely check if the configurationFiles property is available on this task via reflection
-            try {
-                val configFilesMethod = this::class.members.find { it.name == "getConfigurationFiles" }
-                if (configFilesMethod != null) {
-                    // Safely read the generated file into the ProGuard pipeline configuration
-                    val fileCollection = layout.buildDirectory.file("generated/nav-proguard-rules.pro")
-                    (this as? com.android.build.gradle.internal.tasks.R8Task)?.configurationFiles?.from(fileCollection)
-                }
-            } catch (_: Exception) {
-                // Silently catch and bypass if a project environment doesn't expose the AGP R8 internal interface
+// 2. Wire the task output into the official Android Components Variant API
+    androidComponents {
+        onVariants { variant ->
+            // Only inject into release builds (or any minified build type)
+            if (variant.isMinifyEnabled) {
+                // Automatically appends our generated rule file to the ProGuard/R8 configuration pipeline
+                variant.proguardFiles.add(generateNavProguard.map { task ->
+                    layout.buildDirectory.file("generated/nav-proguard-rules.pro").get()
+                })
             }
         }
     }
