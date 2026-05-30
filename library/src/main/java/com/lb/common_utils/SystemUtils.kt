@@ -106,10 +106,10 @@ object SystemUtils {
             ) != 0
 
     /** returns the max size of the heap, in bytes     */
-    private fun getMaxMemInBytes(): Long = Runtime.getRuntime().maxMemory()
+    fun getMaxMemInBytes(): Long = Runtime.getRuntime().maxMemory()
 
     /** returns the currently free memory in bytes (of the heap)     */
-    private fun getAvailableMemInBytes(): Long {
+    fun getAvailableMemInBytes(): Long {
         // find available memory
         val runtime = Runtime.getRuntime()
         val usedMem = runtime.totalMemory() - runtime.freeMemory()
@@ -253,7 +253,7 @@ object SystemUtils {
 
     fun hasSuBinary(): Boolean {
         return try {
-            val binaryName="su"
+            val binaryName = "su"
             val paths = System.getenv("PATH")
             if (!paths.isNullOrBlank()) {
                 val systemPlaces: List<String> = paths.split(":")
