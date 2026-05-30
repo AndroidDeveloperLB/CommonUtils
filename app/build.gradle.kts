@@ -3,6 +3,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 
 plugins {
     id("com.android.application")
+    id("com.lb.navplugin.NavProguardPlugin")
 }
 
 android {
