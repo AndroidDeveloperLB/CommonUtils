@@ -9,6 +9,9 @@ repositories {
     mavenCentral()
 }
 
+group = "com.lb.navplugin"
+version = "1.0.0"
+
 gradlePlugin {
     plugins {
         create("navProguardPlugin") {

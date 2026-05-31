@@ -11,10 +11,8 @@ class NavProguardPlugin : Plugin<Project> {
             val navFolder = project.file("src/main/res/navigation")
             val outputFile = project.layout.buildDirectory.file("generated/nav-proguard-rules.pro")
 
-            if (navFolder.exists()) {
-                inputs.dir(navFolder).optional()
-            }
-            outputs.file(outputFile)
+            inputs.files(navFolder).optional().withPropertyName("navFolder")
+            outputs.file(outputFile).withPropertyName("outputFile")
 
             doLast {
                 val classesToKeep = mutableSetOf<String>()
