@@ -11,7 +11,9 @@ class NavProguardPlugin : Plugin<Project> {
             val navFolder = project.file("src/main/res/navigation")
             val outputFile = project.layout.buildDirectory.file("generated/nav-proguard-rules.pro")
 
-            inputs.dir(navFolder).optional(true)
+            if (navFolder.exists()) {
+                inputs.dir(navFolder).optional()
+            }
             outputs.file(outputFile)
 
             doLast {

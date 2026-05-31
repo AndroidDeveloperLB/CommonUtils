@@ -3,4 +3,8 @@ before_install:
   - sdk use java 17.0.1-open
 
 jdk:
-  -openjdk17
+  - openjdk17
+
+build:
+  - ./gradlew :library:publishToMavenLocal
+  - ./gradlew -p nav-plugin publishToMavenLocal

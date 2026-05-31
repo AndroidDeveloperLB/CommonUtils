@@ -1,15 +1,13 @@
 plugins {
     `kotlin-dsl`
     `java-gradle-plugin`
+    `maven-publish`
 }
 
 repositories {
     google()
     mavenCentral()
 }
-
-group = "com.lb.navplugin"
-version = "1.0.0"
 
 gradlePlugin {
     plugins {
