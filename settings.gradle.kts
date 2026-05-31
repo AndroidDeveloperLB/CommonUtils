@@ -1,5 +1,5 @@
 pluginManagement {
-    includeBuild("navProguardPlugin")
+    includeBuild("nav-plugin")
     repositories {
         google()
         mavenCentral()
