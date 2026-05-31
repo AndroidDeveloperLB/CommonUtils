@@ -1,45 +1,61 @@
 package com.lb.navplugin
 
 import com.android.build.api.variant.ApplicationAndroidComponentsExtension
+import org.gradle.api.DefaultTask
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import java.util.regex.Pattern
+import org.gradle.api.file.DirectoryProperty
+import org.gradle.api.file.RegularFileProperty
+import org.gradle.api.tasks.*
+import java.util.Locale
 
-class NavProguardPlugin : Plugin<Project> {
-    override fun apply(project: Project) {
-        val generateNavProguard = project.tasks.register("generateNavProguard") {
-            val navFolder = project.file("src/main/res/navigation")
-            val outputFile = project.layout.buildDirectory.file("generated/nav-proguard-rules.pro")
+abstract class GenerateNavProguardTask : DefaultTask() {
+    @get:InputFiles
+    @get:PathSensitive(PathSensitivity.RELATIVE)
+    @get:Optional
+    abstract val navFolder: DirectoryProperty
 
-            inputs.files(navFolder).optional().withPropertyName("navFolder")
-            outputs.file(outputFile).withPropertyName("outputFile")
+    @get:OutputFile
+    abstract val outputFile: RegularFileProperty
 
-            doLast {
-                val classesToKeep = mutableSetOf<String>()
-                if (navFolder.exists()) {
-                    navFolder.walk().filter { it.extension == "xml" }.forEach { file ->
-                        val matches = Regex("""app:argType="([^"]+)"""").findAll(file.readText())
-                        matches.forEach { match ->
-                            val className = match.groupValues[1].replace("[]", "")
-                            if (className.contains(".")) {
-                                classesToKeep.add(className)
-                            }
-                        }
+    @TaskAction
+    fun generate() {
+        val folder = navFolder.orNull?.asFile
+        val out = outputFile.get().asFile
+        val classesToKeep = mutableSetOf<String>()
+
+        if (folder != null && folder.exists()) {
+            folder.walk().filter { it.extension == "xml" }.forEach { file ->
+                val matches = Regex("""app:argType="([^"]+)"""").findAll(file.readText())
+                matches.forEach { match ->
+                    val className = match.groupValues[1].replace("[]", "")
+                    if (className.contains(".")) {
+                        classesToKeep.add(className)
                     }
                 }
-
-                val out = outputFile.get().asFile
-                out.parentFile.mkdirs()
-                out.writeText(classesToKeep.joinToString("\n") { "-keep class $it { *; }" })
             }
         }
 
+        out.parentFile.mkdirs()
+        out.writeText(classesToKeep.joinToString("\n") { "-keep class $it { *; }" })
+    }
+}
+
+class NavProguardPlugin : Plugin<Project> {
+    override fun apply(project: Project) {
         project.pluginManager.withPlugin("com.android.application") {
             val androidComponents = project.extensions.getByType(ApplicationAndroidComponentsExtension::class.java)
             androidComponents.onVariants { variant ->
-                variant.proguardFiles.add(generateNavProguard.map { 
-                    project.layout.buildDirectory.file("generated/nav-proguard-rules.pro").get()
-                })
+                val variantName = variant.name.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }
+                val taskProvider = project.tasks.register("generateNavProguard$variantName", GenerateNavProguardTask::class.java) {
+                    val navFolderFile = project.file("src/main/res/navigation")
+                    if (navFolderFile.exists()) {
+                        navFolder.set(navFolderFile)
+                    }
+                    outputFile.set(project.layout.buildDirectory.file("generated/nav-proguard-${variant.name}.pro"))
+                }
+
+                variant.proguardFiles.add(taskProvider.flatMap { it.outputFile })
             }
         }
     }
