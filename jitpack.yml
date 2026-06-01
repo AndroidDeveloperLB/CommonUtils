@@ -2,4 +2,3 @@ jdk:
   - openjdk17
 install:
   - ./gradlew :library:publishToMavenLocal
-  - ./gradlew -p nav-plugin publishToMavenLocal

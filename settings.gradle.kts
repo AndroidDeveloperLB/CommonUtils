@@ -1,5 +1,4 @@
 pluginManagement {
-    includeBuild("nav-plugin")
     repositories {
         google()
         mavenCentral()
