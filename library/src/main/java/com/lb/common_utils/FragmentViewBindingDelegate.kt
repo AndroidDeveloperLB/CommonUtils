@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.UiThread
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
@@ -22,21 +23,21 @@ fun AppCompatActivity.setContentView(binding: ViewBinding) = setContentView(bind
 
 @Suppress("MemberVisibilityCanBePrivate")
 open class BoundViewHolder<ViewBindingType : ViewBinding>(
-    val binding: ViewBindingType,
-    holderView: View = binding.root
+        val binding: ViewBindingType,
+        holderView: View = binding.root
 ) : RecyclerView.ViewHolder(holderView)
 
 /**usage:     private val binding by viewBinding(MainActivityBinding::inflate)*/
 inline fun <T : ViewBinding> AppCompatActivity.viewBinding(crossinline bindingInflater: (LayoutInflater) -> T) =
-    lazy(LazyThreadSafetyMode.NONE) {
-        bindingInflater.invoke(layoutInflater)
-    }
+        lazy(LazyThreadSafetyMode.NONE) {
+            bindingInflater.invoke(layoutInflater)
+        }
 
 
 /**usage:  Fragment(R.layout.first_fragment)
  *  private val binding by viewBinding(FirstFragmentBinding::bind)*/
 fun <T : ViewBinding> Fragment.viewBinding(viewBindingFactory: (View) -> T) =
-    FragmentViewBindingDelegate(this, viewBindingFactory)
+        FragmentViewBindingDelegate(this, viewBindingFactory)
 
 /** usage:  class MyFragment:DialogFragment()
  * private val binding by viewBinding(MyFragmentBinding::inflate)
@@ -48,15 +49,16 @@ fun <T : ViewBinding> Fragment.viewBinding(viewBindingFactory: (View) -> T) =
  *   private val binding by viewBinding(FragmentBinding::bind)
  */
 inline fun <T : ViewBinding> DialogFragment.viewBinding(crossinline factory: (LayoutInflater) -> T) =
-    lazy(LazyThreadSafetyMode.NONE) {
-        factory(layoutInflater)
-    }
+        lazy(LazyThreadSafetyMode.NONE) {
+            factory(layoutInflater)
+        }
 
 abstract class BoundActivity<T : ViewBinding>(private val factory: (LayoutInflater) -> T) :
-    AppCompatActivity() {
+        AppCompatActivity() {
     @Suppress("MemberVisibilityCanBePrivate")
     lateinit var binding: T
 
+    @UiThread
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = factory(layoutInflater)
@@ -65,19 +67,21 @@ abstract class BoundActivity<T : ViewBinding>(private val factory: (LayoutInflat
 }
 
 abstract class BoundFragment<T : ViewBinding>(private val factory: (LayoutInflater, ViewGroup?, Boolean) -> T) :
-    Fragment() {
+        Fragment() {
     @Suppress("MemberVisibilityCanBePrivate")
     protected var binding: T? = null
 
+    @UiThread
     override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
+            inflater: LayoutInflater,
+            container: ViewGroup?,
+            savedInstanceState: Bundle?
     ): View? {
         binding = factory(inflater, container, false)
         return binding?.root
     }
 
+    @UiThread
     override fun onDestroyView() {
         super.onDestroyView()
         binding = null
@@ -85,37 +89,40 @@ abstract class BoundFragment<T : ViewBinding>(private val factory: (LayoutInflat
 }
 
 class FragmentViewBindingDelegate<T : ViewBinding>(
-    val fragment: Fragment,
-    val viewBindingFactory: (View) -> T
+        val fragment: Fragment,
+        val viewBindingFactory: (View) -> T
 ) : ReadOnlyProperty<Fragment, T> {
     private var binding: T? = null
 
     init {
         fragment.lifecycle.addObserver(object : DefaultLifecycleObserver {
             val viewLifecycleOwnerLiveDataObserver =
-                Observer<LifecycleOwner?> {
-                    val viewLifecycleOwner = it ?: return@Observer
-                    viewLifecycleOwner.lifecycle.addObserver(object : DefaultLifecycleObserver {
-                        override fun onDestroy(owner: LifecycleOwner) {
-                            binding = null
-                        }
-                    })
-                }
+                    Observer<LifecycleOwner?> {
+                        val viewLifecycleOwner = it ?: return@Observer
+                        viewLifecycleOwner.lifecycle.addObserver(object : DefaultLifecycleObserver {
+                            override fun onDestroy(owner: LifecycleOwner) {
+                                binding = null
+                            }
+                        })
+                    }
 
+            @UiThread
             override fun onCreate(owner: LifecycleOwner) {
                 fragment.viewLifecycleOwnerLiveData.observeForever(
-                    viewLifecycleOwnerLiveDataObserver
+                        viewLifecycleOwnerLiveDataObserver
                 )
             }
 
+            @UiThread
             override fun onDestroy(owner: LifecycleOwner) {
                 fragment.viewLifecycleOwnerLiveData.removeObserver(
-                    viewLifecycleOwnerLiveDataObserver
+                        viewLifecycleOwnerLiveDataObserver
                 )
             }
         })
     }
 
+    @UiThread
     override fun getValue(thisRef: Fragment, property: KProperty<*>): T {
         binding?.let { return it }
         val lifecycle = fragment.viewLifecycleOwner.lifecycle

@@ -1,6 +1,7 @@
 package com.lb.common_utils
 
 import androidx.annotation.IntRange
+import androidx.annotation.WorkerThread
 import java.io.Closeable
 import java.io.InputStream
 
@@ -19,6 +20,7 @@ fun Closeable?.closeSilently() {
  * @return Number of bytes actually skipped.
  */
 @IntRange(from = 0L)
+@WorkerThread
 fun InputStream.skipForcibly(size: Long): Long {
     if (size <= 0L)
         return 0L
@@ -46,6 +48,7 @@ fun InputStream.skipForcibly(size: Long): Long {
  * @param byteArray The buffer to read into.
  * @param bytesToRead Number of bytes to read (defaults to array size).
  */
+@WorkerThread
 fun InputStream.readBytesIntoByteArray(byteArray: ByteArray, bytesToRead: Int = byteArray.size) {
     var offset = 0
     while (true) {

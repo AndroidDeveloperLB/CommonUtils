@@ -4,6 +4,8 @@ import android.annotation.SuppressLint
 import android.os.Handler
 import android.os.Looper
 import androidx.annotation.AnyThread
+import androidx.annotation.UiThread
+import androidx.annotation.WorkerThread
 import androidx.core.os.HandlerCompat
 import androidx.lifecycle.MutableLiveData
 import java.util.concurrent.CountDownLatch
@@ -14,7 +16,17 @@ val uiHandler = Handler(Looper.getMainLooper())
 fun isUiThread() =
         Looper.getMainLooper().isCurrentThread
 
-fun runOnUiThread(runnable: Runnable) {
+fun interface UiRunnable : Runnable {
+    @UiThread
+    override fun run()
+}
+
+fun interface WorkerRunnable : Runnable {
+    @WorkerThread
+    override fun run()
+}
+
+fun runOnUiThread(runnable: UiRunnable) {
     if (isUiThread()) runnable.run()
     else uiHandler.post(runnable)
 }
@@ -23,8 +35,9 @@ fun Handler.postDelayedWithToken(runnable: Runnable, token: Any?, delayMillis: L
         HandlerCompat.postDelayed(this, runnable, token, delayMillis)
 
 @AnyThread
-fun runAndWaitForUiThread(runnable: Runnable) {
+fun runAndWaitForUiThread(runnable: UiRunnable) {
     if (isUiThread()) {
+        @SuppressLint("ThreadConstraint")
         runnable.run()
         return
     }
@@ -57,6 +70,7 @@ fun interface ResultCallback<T> {
     fun getResult(): T
 }
 
+@AnyThread
 fun <T> runOnUiThreadWithResult(callback: ResultCallback<T>): T {
     if (isUiThread())
         return callback.getResult()
@@ -70,5 +84,3 @@ fun <T> runOnUiThreadWithResult(callback: ResultCallback<T>): T {
     return resultRef.get()
 }
 
-object ThreadEx {
-}
