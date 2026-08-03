@@ -22,6 +22,9 @@ import java.util.Stack
 inline fun <reified T : Preference> PreferenceFragmentCompat.findPreference(@StringRes prefKey: Int): T =
     findPreference(getString(prefKey))!!
 
+fun PreferenceFragmentCompat.findPreference(@StringRes prefKey: Int): Preference =
+        findPreference<Preference>(prefKey)
+
 inline fun <reified T : Preference> PreferenceGroup.findPreference(@StringRes prefKey: Int): T? =
     findPreference(context.getString(prefKey))
 
