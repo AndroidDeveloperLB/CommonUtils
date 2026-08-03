@@ -13,13 +13,17 @@ import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.PreferenceGroup
 import androidx.preference.PreferenceManager
 import androidx.preference.PreferenceScreen
+import androidx.preference.children
 import org.json.JSONArray
 import org.json.JSONException
 import java.util.EnumSet
 import java.util.Stack
 
-fun PreferenceFragmentCompat.findPreference(@StringRes prefKey: Int): Preference =
+inline fun <reified T : Preference> PreferenceFragmentCompat.findPreference(@StringRes prefKey: Int): T =
     findPreference(getString(prefKey))!!
+
+inline fun <reified T : Preference> PreferenceGroup.findPreference(@StringRes prefKey: Int): T? =
+    findPreference(context.getString(prefKey))
 
 @Suppress("unused")
 object PreferenceUtil {

@@ -26,6 +26,7 @@ fun interface WorkerRunnable : Runnable {
     override fun run()
 }
 
+/**if on UI thread, performs the runnable right away. If not, posts it to the UI thread, without waiting for it*/
 fun runOnUiThread(runnable: UiRunnable) {
     if (isUiThread()) runnable.run()
     else uiHandler.post(runnable)
