@@ -18,15 +18,19 @@ import org.json.JSONArray
 import org.json.JSONException
 import java.util.EnumSet
 import java.util.Stack
+import kotlin.jvm.JvmName
 
 inline fun <reified T : Preference> PreferenceFragmentCompat.findPreference(@StringRes prefKey: Int): T =
-    findPreference(getString(prefKey))!!
+        findPreference(getString(prefKey))!!
 
-fun PreferenceFragmentCompat.findPreference(@StringRes prefKey: Int): Preference =
-        findPreference<Preference>(prefKey)
+fun PreferenceFragmentCompat.findPref(@StringRes prefKey: Int): Preference =
+        findPreference(getString(prefKey))!!
 
-inline fun <reified T : Preference> PreferenceGroup.findPreference(@StringRes prefKey: Int): T? =
-    findPreference(context.getString(prefKey))
+inline fun <reified T : Preference> PreferenceGroup.findPreference(@StringRes prefKey: Int): T =
+        findPreference(context.getString(prefKey))!!
+
+fun PreferenceGroup.findPref(@StringRes prefKey: Int): Preference =
+        findPreference(context.getString(prefKey))!!
 
 @Suppress("unused")
 object PreferenceUtil {
@@ -44,12 +48,12 @@ object PreferenceUtil {
     }
 
     fun prepareListPreference(
-        fragment: PreferenceFragmentCompat,
-        prefKeyId: Int, //
-        @ArrayRes entriesId: Int,
-        @ArrayRes valuesId: Int,
-        @StringRes defaultValueId: Int,
-        listener: OnListPreferenceChosenListener?
+            fragment: PreferenceFragmentCompat,
+            prefKeyId: Int, //
+            @ArrayRes entriesId: Int,
+            @ArrayRes valuesId: Int,
+            @StringRes defaultValueId: Int,
+            listener: OnListPreferenceChosenListener?
     ): ListPreference {
         val entries = fragment.resources.getStringArray(entriesId)
         val values = fragment.resources.getStringArray(valuesId)
@@ -57,29 +61,29 @@ object PreferenceUtil {
     }
 
     fun prepareListPreference(
-        fragment: PreferenceFragmentCompat,
-        @StringRes prefKeyId: Int,
-        entries: Array<String>,
-        values: Array<String>,
-        @StringRes defaultValueId: Int,
-        listener: OnListPreferenceChosenListener?
+            fragment: PreferenceFragmentCompat,
+            @StringRes prefKeyId: Int,
+            entries: Array<String>,
+            values: Array<String>,
+            @StringRes defaultValueId: Int,
+            listener: OnListPreferenceChosenListener?
     ): ListPreference {
         val defaultValue = fragment.resources.getString(defaultValueId)
         return prepareListPreference(fragment, prefKeyId, entries, values, defaultValue, listener)
     }
 
     fun prepareListPreference(
-        fragment: PreferenceFragmentCompat,
-        @StringRes prefKeyId: Int,
-        entries: Array<String>,
-        values: Array<String>,
-        defaultValue: String?,
-        listener: OnListPreferenceChosenListener?
+            fragment: PreferenceFragmentCompat,
+            @StringRes prefKeyId: Int,
+            entries: Array<String>,
+            values: Array<String>,
+            defaultValue: String?,
+            listener: OnListPreferenceChosenListener?
     ): ListPreference {
         val prefKey = fragment.getString(prefKeyId)
         val pref = fragment.findPreference<ListPreference>(prefKey)
         val currentValue = getDefaultSharedPreferences(fragment.activity!!)
-            .getString(prefKey, null)
+                .getString(prefKey, null)
         pref!!.setDefaultValue(defaultValue)
         pref.summary = "%s"
         if (currentValue == null)
@@ -89,46 +93,46 @@ object PreferenceUtil {
         pref.setOnPreferenceChangeListener { _, newValue ->
             val newValueStr = newValue.toString()
             return@setOnPreferenceChangeListener listener?.onChosenPreference(prefKey, newValueStr)
-                ?: true
+                    ?: true
         }
         return pref
     }
 
     // enum
     inline fun <reified EnumType : Enum<EnumType>> getEnumPref(
-        context: Context,
-        @StringRes prefKeyResId: Int,
-        @StringRes prefDefaultValueResId: Int
+            context: Context,
+            @StringRes prefKeyResId: Int,
+            @StringRes prefDefaultValueResId: Int
     ): EnumType {
         val value = getStringPref(context, prefKeyResId, prefDefaultValueResId)
         return value?.runCatching { enumValueOf<EnumType>(this) }
-            ?.getOrNull() ?: enumValueOf(context.getString(prefDefaultValueResId))
+                ?.getOrNull() ?: enumValueOf(context.getString(prefDefaultValueResId))
     }
 
     inline fun <reified EnumType : Enum<EnumType>> getEnumPref(
-        context: Context,
-        @StringRes prefKeyResId: Int,
-        prefDefaultValue: EnumType
+            context: Context,
+            @StringRes prefKeyResId: Int,
+            prefDefaultValue: EnumType
     ): EnumType {
         val value = getStringPref(context, prefKeyResId, prefDefaultValue.name)
         return value?.runCatching { enumValueOf<EnumType>(this) }
-            ?.getOrNull() ?: prefDefaultValue
+                ?.getOrNull() ?: prefDefaultValue
     }
 
     fun <EnumType : Enum<EnumType>> putEnumPref(
-        context: Context,
-        @StringRes prefKeyResId: Int,
-        enumValue: EnumType?
+            context: Context,
+            @StringRes prefKeyResId: Int,
+            enumValue: EnumType?
     ) {
         putStringPref(context, prefKeyResId, enumValue?.name)
     }
 
     // enumset
     fun <EnumType : Enum<EnumType>> getEnumSetPref(
-        context: Context,
-        @StringRes prefKeyResId: Int,
-        @StringRes prefDefaultValueResId: Int,
-        enumClass: Class<EnumType>
+            context: Context,
+            @StringRes prefKeyResId: Int,
+            @StringRes prefDefaultValueResId: Int,
+            enumClass: Class<EnumType>
     ): EnumSet<EnumType> {
         val value = getStringPref(context, prefKeyResId, prefDefaultValueResId)
         val result = EnumSet.noneOf(enumClass)
@@ -142,9 +146,9 @@ object PreferenceUtil {
     }
 
     fun <EnumType : Enum<EnumType>> putEnumCollectionPref(
-        context: Context,
-        @StringRes prefKeyResId: Int,
-        enumCollection: Collection<EnumType>?
+            context: Context,
+            @StringRes prefKeyResId: Int,
+            enumCollection: Collection<EnumType>?
     ) {
         val valToPut: String? = when {
             enumCollection.isNullOrEmpty() -> null
@@ -161,8 +165,8 @@ object PreferenceUtil {
 
     //enum list
     fun <EnumType : Enum<EnumType>> getEnumListPref(
-        context: Context, @StringRes prefKeyResId: Int, @StringRes prefDefaultValueResId: Int,
-        enumClass: Class<EnumType>
+            context: Context, @StringRes prefKeyResId: Int, @StringRes prefDefaultValueResId: Int,
+            enumClass: Class<EnumType>
     ): List<EnumType> {
         val value = getStringPref(context, prefKeyResId, prefDefaultValueResId)
         val result = ArrayList<EnumType>()
@@ -177,9 +181,9 @@ object PreferenceUtil {
 
     //enum list
     fun <EnumType : Enum<EnumType>> getEnumListPref(
-        context: Context,
-        @StringRes prefKeyResId: Int,
-        enumClass: Class<EnumType>
+            context: Context,
+            @StringRes prefKeyResId: Int,
+            enumClass: Class<EnumType>
     ): List<EnumType>? {
         if (!hasPreference(context, prefKeyResId))
             return null
@@ -196,28 +200,28 @@ object PreferenceUtil {
 
     // string
     fun getStringPref(context: Context, prefKey: String, defaultValue: String?): String? =
-        getDefaultSharedPreferences(context).getString(prefKey, defaultValue)
+            getDefaultSharedPreferences(context).getString(prefKey, defaultValue)
 
     fun getStringPref(
-        context: Context,
-        @StringRes prefKeyResId: Int,
-        @StringRes prefDefaultValueResId: Int
+            context: Context,
+            @StringRes prefKeyResId: Int,
+            @StringRes prefDefaultValueResId: Int
     ): String? {
         val prefKey = context.getString(prefKeyResId)
         val defaultValue = if (prefDefaultValueResId == 0) null else context.resources.getString(
-            prefDefaultValueResId
+                prefDefaultValueResId
         )
         return getDefaultSharedPreferences(context).getString(prefKey, defaultValue)
     }
 
     fun getStringPref(
-        context: Context,
-        @StringRes prefKeyResId: Int,
-        defaultValue: String?
+            context: Context,
+            @StringRes prefKeyResId: Int,
+            defaultValue: String?
     ): String? {
         val prefKey = context.getString(prefKeyResId)
         return getDefaultSharedPreferences(context)
-            .getString(prefKey, defaultValue)
+                .getString(prefKey, defaultValue)
     }
 
     fun putStringPref(context: Context, @StringRes prefKeyResId: Int, newValue: String?) {
@@ -228,23 +232,23 @@ object PreferenceUtil {
 
     // boolean
     fun getBooleanPref(
-        context: Context,
-        @StringRes prefKeyResId: Int,
-        @BoolRes prefDefaultValueResId: Int
+            context: Context,
+            @StringRes prefKeyResId: Int,
+            @BoolRes prefDefaultValueResId: Int
     ): Boolean {
         return getDefaultSharedPreferences(context).getBoolean(
-            context.getString(prefKeyResId),
-            context.resources.getBoolean(prefDefaultValueResId)
+                context.getString(prefKeyResId),
+                context.resources.getBoolean(prefDefaultValueResId)
         )
     }
 
     fun getBooleanPref(
-        context: Context,
-        prefKey: String,
-        @BoolRes prefDefaultValueResId: Int
+            context: Context,
+            prefKey: String,
+            @BoolRes prefDefaultValueResId: Int
     ): Boolean {
         return getDefaultSharedPreferences(context)
-            .getBoolean(prefKey, context.resources.getBoolean(prefDefaultValueResId))
+                .getBoolean(prefKey, context.resources.getBoolean(prefDefaultValueResId))
     }
 
     fun getBooleanPref(context: Context, prefKey: String, defaultValue: Boolean): Boolean {
@@ -253,9 +257,9 @@ object PreferenceUtil {
 
     // boolean
     fun getBooleanPref(
-        context: Context,
-        @StringRes prefKeyResId: Int,
-        defaultValue: Boolean
+            context: Context,
+            @StringRes prefKeyResId: Int,
+            defaultValue: Boolean
     ): Boolean {
         return getDefaultSharedPreferences(context).getBoolean(context.getString(prefKeyResId), defaultValue)
     }
@@ -268,13 +272,13 @@ object PreferenceUtil {
 
     // int
     fun getIntPrefOrDefaultIntFromResId(
-        context: Context,
-        @StringRes prefKeyResId: Int,
-        @IntegerRes prefDefaultValueResId: Int
+            context: Context,
+            @StringRes prefKeyResId: Int,
+            @IntegerRes prefDefaultValueResId: Int
     ): Int {
         val prefKey = context.getString(prefKeyResId)
         val defaultValue = if (prefDefaultValueResId == 0) -1 else context.resources.getInteger(
-            prefDefaultValueResId
+                prefDefaultValueResId
         )
         return getDefaultSharedPreferences(context).getInt(prefKey, defaultValue)
     }
@@ -313,15 +317,15 @@ object PreferenceUtil {
 
     // dimen
     fun getDimenAsStringPref(
-        context: Context,
-        @StringRes prefKeyResId: Int,
-        prefDefaultValueResId: Int
+            context: Context,
+            @StringRes prefKeyResId: Int,
+            prefDefaultValueResId: Int
     ): Float {
         val prefKey = context.getString(prefKeyResId)
         val res = context.resources
         val preferences = getDefaultSharedPreferences(context)
         val string = preferences.getString(prefKey, null)
-            ?: return res.getDimension(prefDefaultValueResId) / res.displayMetrics.density
+                ?: return res.getDimension(prefDefaultValueResId) / res.displayMetrics.density
         return java.lang.Float.parseFloat(string)
     }
 
@@ -331,9 +335,9 @@ object PreferenceUtil {
 
     // string set
     fun putStringCollection(
-        context: Context,
-        @StringRes prefKeyResId: Int,
-        newValue: Collection<String>?
+            context: Context,
+            @StringRes prefKeyResId: Int,
+            newValue: Collection<String>?
     ) {
         val editor = getDefaultSharedPreferences(context).edit()
         val key = context.getString(prefKeyResId)
@@ -346,7 +350,7 @@ object PreferenceUtil {
     fun getStringSet(context: Context, @StringRes prefKeyResId: Int): Set<String>? {
         val key = context.getString(prefKeyResId)
         val str = getDefaultSharedPreferences(context).getString(key, null)
-            ?: return null
+                ?: return null
         try {
             val jsonArray = JSONArray(str)
             val result = HashSet<String>()
