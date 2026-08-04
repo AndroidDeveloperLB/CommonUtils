@@ -20,21 +20,23 @@ import java.util.EnumSet
 import java.util.Stack
 import kotlin.jvm.JvmName
 
+@JvmName("findPreferenceEx")
 inline fun <reified T : Preference> PreferenceFragmentCompat.findPreference(@StringRes prefKey: Int): T =
         findPreference(getString(prefKey))!!
 
-fun PreferenceFragmentCompat.findPref(pref: String): Preference = findPreference(pref)!!
-
-fun PreferenceFragmentCompat.findPref(@StringRes prefKey: Int): Preference =
+fun PreferenceFragmentCompat.findPreference(@StringRes prefKey: Int): Preference =
         findPreference(getString(prefKey))!!
 
+fun PreferenceFragmentCompat.findPreference(pref: String): Preference = findPreference(pref)!!
+
+@JvmName("findPreferenceEx")
 inline fun <reified T : Preference> PreferenceGroup.findPreference(@StringRes prefKey: Int): T =
         findPreference(context.getString(prefKey))!!
 
-fun PreferenceGroup.findPref(@StringRes prefKey: Int): Preference =
+fun PreferenceGroup.findPreference(@StringRes prefKey: Int): Preference =
         findPreference(context.getString(prefKey))!!
 
-fun PreferenceGroup.findPref(pref: String): Preference = findPreference(pref)!!
+fun PreferenceGroup.findPreference(pref: String): Preference = findPreference(pref)!!
 
 @Suppress("unused")
 object PreferenceUtil {
