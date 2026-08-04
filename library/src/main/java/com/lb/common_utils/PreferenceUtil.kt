@@ -27,7 +27,7 @@ inline fun <reified T : Preference> PreferenceFragmentCompat.findPreference(@Str
 fun PreferenceFragmentCompat.findPreference(@StringRes prefKey: Int): Preference =
         findPreference(getString(prefKey))!!
 
-fun PreferenceFragmentCompat.findPreference(pref: CharSequence): Preference = findPreference(pref)!!
+fun PreferenceFragmentCompat.findPreferenceEx(pref: CharSequence): Preference = findPreference(pref)!!
 
 @JvmName("findPreferenceEx")
 inline fun <reified T : Preference> PreferenceGroup.findPreference(@StringRes prefKey: Int): T =
@@ -36,7 +36,7 @@ inline fun <reified T : Preference> PreferenceGroup.findPreference(@StringRes pr
 fun PreferenceGroup.findPreference(@StringRes prefKey: Int): Preference =
         findPreference(context.getString(prefKey))!!
 
-fun PreferenceGroup.findPreference(pref: CharSequence): Preference = findPreference(pref)!!
+fun PreferenceGroup.findPreferenceEx(pref: CharSequence): Preference = findPreference(pref)!!
 
 @Suppress("unused")
 object PreferenceUtil {
