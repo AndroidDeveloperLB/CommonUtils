@@ -23,6 +23,8 @@ import kotlin.jvm.JvmName
 inline fun <reified T : Preference> PreferenceFragmentCompat.findPreference(@StringRes prefKey: Int): T =
         findPreference(getString(prefKey))!!
 
+fun PreferenceFragmentCompat.findPref(pref: String): Preference = findPreference(pref)!!
+
 fun PreferenceFragmentCompat.findPref(@StringRes prefKey: Int): Preference =
         findPreference(getString(prefKey))!!
 
@@ -31,6 +33,8 @@ inline fun <reified T : Preference> PreferenceGroup.findPreference(@StringRes pr
 
 fun PreferenceGroup.findPref(@StringRes prefKey: Int): Preference =
         findPreference(context.getString(prefKey))!!
+
+fun PreferenceGroup.findPref(pref: String): Preference = findPreference(pref)!!
 
 @Suppress("unused")
 object PreferenceUtil {
