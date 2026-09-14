@@ -24,10 +24,34 @@ import androidx.annotation.StringRes
 import androidx.core.graphics.drawable.DrawableCompat
 import androidx.core.view.children
 import androidx.core.view.forEachIndexed
+import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
 import androidx.core.widget.ImageViewCompat
+import androidx.core.widget.TextViewCompat
 import com.google.android.material.badge.BadgeDrawable
 import com.google.android.material.badge.BadgeUtils
+import com.google.android.material.progressindicator.BaseProgressIndicator
+import com.google.android.material.progressindicator.BaseProgressIndicatorSpec
+
+fun TextView.setTintForCompoundDrawables(@ColorInt color: Int?) {
+    if (color == null || color == 0) {
+        TextViewCompat.setCompoundDrawableTintList(this, null)
+        return
+    }
+    TextViewCompat.setCompoundDrawableTintMode(this, Mode.SRC_ATOP)
+    TextViewCompat.setCompoundDrawableTintList(this, ColorStateList.valueOf(color))
+}
+
+/**workaround for this: https://issuetracker.google.com/issues/183224448*/
+fun <T : BaseProgressIndicatorSpec> BaseProgressIndicator<T>.setIndeterminateEx(indeterminate: Boolean) {
+    if (!isVisible)
+        isIndeterminate = indeterminate
+    else {
+        isInvisible = true
+        isIndeterminate = indeterminate
+        isVisible = true
+    }
+}
 
 //    https://github.com/material-components/material-components-android/issues/3860#issuecomment-1822276005
 @androidx.annotation.OptIn(com.google.android.material.badge.ExperimentalBadgeUtils::class)
