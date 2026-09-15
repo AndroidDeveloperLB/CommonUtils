@@ -1,7 +1,8 @@
+package com.lb.common_utils
+
 import androidx.annotation.AnyThread
 import androidx.annotation.UiThread
 import androidx.lifecycle.MediatorLiveData
-import com.lb.common_utils.MutableLiveData2
 
 fun <T, R> MutableLiveData2<T>.mapNonNull(transform: (T) -> R): MediatorLiveData2<R> {
     val result = MediatorLiveData2(transform(getValue()))
