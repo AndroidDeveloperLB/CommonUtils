@@ -8,7 +8,7 @@ import android.widget.ViewAnimator
 
 /**
  * A ViewAnimator that can block touch events for a set duration after a transition.
- * Use this to prevent accidental clicks immediately after something replaces a loading screen, for example
+ * Use this to prevent accidental clicks immediately after an ad replaces a loading screen, for example
  */
 class SafeTransitionViewAnimator @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null) : ViewAnimator(context, attrs) {
     private var transitionTime: Long = 0
