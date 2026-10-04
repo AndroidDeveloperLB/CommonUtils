@@ -35,19 +35,19 @@ inline fun <reified T> Bundle.getParcelableCompat(key: String): T? = when {
 
 inline fun <reified T : Parcelable> Bundle.getParcelableArrayListCompat(key: String): ArrayList<T>? =
     when {
-        Build.VERSION.SDK_INT > Build.VERSION_CODES.TIRAMISU -> getParcelableArrayList(key, T::class.java)
+        Build.VERSION.SDK_INT > VERSION_CODES.TIRAMISU -> getParcelableArrayList(key, T::class.java)
         else -> @Suppress("DEPRECATION") getParcelableArrayList(key)
     }
 
 inline fun <reified T : Parcelable> Intent.getParcelableArrayListExtraCompat(key: String): ArrayList<T>? =
     when {
-        Build.VERSION.SDK_INT > Build.VERSION_CODES.TIRAMISU -> getParcelableArrayListExtra(key, T::class.java)
+        Build.VERSION.SDK_INT > VERSION_CODES.TIRAMISU -> getParcelableArrayListExtra(key, T::class.java)
         else -> @Suppress("DEPRECATION") getParcelableArrayListExtra(key)
     }
 
 inline fun <reified T : Parcelable> Intent.getParcelableArrayExtraCompat(key: String): Array<T>? =
         when {
-            Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU -> getParcelableArrayExtra(key, T::class.java)
+            Build.VERSION.SDK_INT >= VERSION_CODES.TIRAMISU -> getParcelableArrayExtra(key, T::class.java)
             else -> @Suppress("DEPRECATION") getParcelableArrayExtra(key)?.let { array ->
                 Array(array.size) { i -> array[i] as T }
             }
@@ -55,13 +55,13 @@ inline fun <reified T : Parcelable> Intent.getParcelableArrayExtraCompat(key: St
 
 inline fun <reified T : Parcelable> Bundle.getParcelableArrayCompat(key: String): Array<T>? =
         when {
-            Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU -> getParcelableArray(key, T::class.java)
+            Build.VERSION.SDK_INT >= VERSION_CODES.TIRAMISU -> getParcelableArray(key, T::class.java)
             else -> @Suppress("DEPRECATION") getParcelableArray(key)?.let { array ->
                 Array(array.size) { i -> array[i] as T }
             }
         }
 
-inline fun <reified T : java.io.Serializable> Intent.getSerializableExtraCompat(key: String): T? = when {
+inline fun <reified T : Serializable> Intent.getSerializableExtraCompat(key: String): T? = when {
     Build.VERSION.SDK_INT >= VERSION_CODES.TIRAMISU -> getSerializableExtra(key, T::class.java)
     else -> @Suppress("DEPRECATION") getSerializableExtra(key) as? T?
 }
