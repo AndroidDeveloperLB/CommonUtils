@@ -45,11 +45,11 @@ android {
 }
 
 dependencies {
-    api("androidx.core:core-ktx:1.19.0")
+    api("androidx.core:core-ktx:1.19.1")
     api("com.google.android.material:material:1.14.0")
-    api("androidx.work:work-runtime-ktx:2.11.2")
+    api("androidx.work:work-runtime-ktx:2.12.0")
     api("androidx.preference:preference-ktx:1.2.1")
-    implementation("androidx.navigation:navigation-runtime-ktx:2.10.1")
+    implementation("androidx.navigation:navigation-runtime-ktx:2.10.2")
 }
 
 afterEvaluate {
