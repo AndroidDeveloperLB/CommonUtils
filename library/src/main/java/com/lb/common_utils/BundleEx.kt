@@ -6,6 +6,7 @@ import android.os.Build
 import android.os.Build.VERSION_CODES
 import android.os.Bundle
 import android.os.Parcelable
+import androidx.core.content.IntentCompat.getParcelableArrayExtra
 import java.io.Serializable
 
 
@@ -44,6 +45,21 @@ inline fun <reified T : Parcelable> Intent.getParcelableArrayListExtraCompat(key
         else -> @Suppress("DEPRECATION") getParcelableArrayListExtra(key)
     }
 
+inline fun <reified T : Parcelable> Intent.getParcelableArrayExtraCompat(key: String): Array<T>? =
+        when {
+            Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU -> getParcelableArrayExtra(key, T::class.java)
+            else -> @Suppress("DEPRECATION") getParcelableArrayExtra(key)?.let { array ->
+                Array(array.size) { i -> array[i] as T }
+            }
+        }
+
+inline fun <reified T : Parcelable> Bundle.getParcelableArrayCompat(key: String): Array<T>? =
+        when {
+            Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU -> getParcelableArray(key, T::class.java)
+            else -> @Suppress("DEPRECATION") getParcelableArray(key)?.let { array ->
+                Array(array.size) { i -> array[i] as T }
+            }
+        }
 
 inline fun <reified T : java.io.Serializable> Intent.getSerializableExtraCompat(key: String): T? = when {
     Build.VERSION.SDK_INT >= VERSION_CODES.TIRAMISU -> getSerializableExtra(key, T::class.java)
