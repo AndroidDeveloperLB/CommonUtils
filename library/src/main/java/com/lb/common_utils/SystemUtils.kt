@@ -251,6 +251,19 @@ object SystemUtils {
         return false
     }
 
+    fun hasMagiskMounts(): Boolean {
+        val keywords = listOf("magisk", "core/mirror", "core/img", "/data/adb", "zygisk")
+        return try {
+            File("/proc/self/mounts").useLines { lines ->
+                lines.any { line ->
+                    keywords.any { keyword -> line.contains(keyword, ignoreCase = true) }
+                }
+            }
+        } catch (e: Exception) {
+            false
+        }
+    }
+
     fun hasSuBinary(): Boolean {
         return try {
             val binaryName = "su"
@@ -261,7 +274,7 @@ object SystemUtils {
             }
             val places = arrayOf(
                     "/sbin/", "/system/bin/", "/system/xbin/", "/data/local/xbin/", "/data/local/bin/",
-                    "/system/sd/xbin/", "/system/bin/failsafe/", "/data/local/"
+                    "/system/sd/xbin/", "/system/bin/failsafe/", "/data/local/","/system_ext/bin/"
             )
             return places.firstOrNull { File(it, binaryName).exists() } != null
         } catch (e: Exception) {
