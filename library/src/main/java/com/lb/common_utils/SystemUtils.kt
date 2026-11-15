@@ -31,8 +31,20 @@ import kotlin.math.max
 
 @RequiresApi(Build.VERSION_CODES.R)
 fun ApplicationExitInfo.wasKilledByLowMemory(): Boolean {
-    return if (ActivityManager.isLowMemoryKillReportSupported()) reason == ApplicationExitInfo.REASON_LOW_MEMORY
+    return if (ActivityManager.isLowMemoryKillReportSupported())
+        reason == ApplicationExitInfo.REASON_LOW_MEMORY
     else reason == ApplicationExitInfo.REASON_SIGNALED && status == OsConstants.SIGKILL
+}
+
+/**https://medium.com/@santimattius/the-new-android-17-standard-why-memory-budgeting-is-no-longer-optional-9e6601410581*/
+fun ApplicationExitInfo.wasKilledByMemoryLimiter(): Boolean {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.CINNAMON_BUN && reason == 17)
+            //ApplicationExitInfo.REASON_MEMORY_LIMITER https://developer.android.com/reference/android/app/ApplicationExitInfo#REASON_MEMORY_LIMITER
+        return true
+    //        https://developer.android.com/about/versions/17/behavior-changes-all#app-memory-limits
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R && reason == ApplicationExitInfo.REASON_OTHER &&
+            description?.contains("MemoryLimiter:AnonSwap") == true) return true
+    return false
 }
 
 /**uses application context to make sure it will avoid memory leaks*/
@@ -274,7 +286,7 @@ object SystemUtils {
             }
             val places = arrayOf(
                     "/sbin/", "/system/bin/", "/system/xbin/", "/data/local/xbin/", "/data/local/bin/",
-                    "/system/sd/xbin/", "/system/bin/failsafe/", "/data/local/","/system_ext/bin/"
+                    "/system/sd/xbin/", "/system/bin/failsafe/", "/data/local/", "/system_ext/bin/"
             )
             return places.firstOrNull { File(it, binaryName).exists() } != null
         } catch (e: Exception) {
