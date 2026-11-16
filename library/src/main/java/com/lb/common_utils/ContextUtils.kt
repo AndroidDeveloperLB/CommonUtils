@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.PackageInfo
+import android.content.res.Configuration
 import android.os.Build.VERSION
 import android.os.Build.VERSION_CODES
 import android.os.Bundle
@@ -73,6 +74,12 @@ fun Fragment.isActivityFinishingOrDestroyed(): Boolean = activity.isFinishedOrFi
 fun Activity?.isFinishedOrFinishing(): Boolean = this == null || isFinishing || isDestroyed
 
 fun Fragment.argumentsSafe(): Bundle = arguments ?: Bundle().also { arguments = it }
+
+fun Context.isCurrentlyOnDarkTheme() =
+        resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_YES
+
+fun Fragment.isCurrentlyOnDarkTheme() =
+        resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_YES
 
 fun interface OnActivityResultSuccessCallback {
     fun onSuccess(result: ActivityResult)
